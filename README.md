@@ -2,11 +2,11 @@ dotfiles
 ========
 
 ```sh
-ln -s ~/bash_profile /Users/viv/.bash_profile
-ln -s ~/clang-format /Users/viv/.clang-format
-ln -s ~/editrc /Users/viv/.editrc
-ln -s ~/inputrc /Users/viv/.inputrc
-ln -s ~/vimrc /Users/viv/.vimrc
+ln -s ~/bash_profile ~/.bash_profile
+ln -s ~/clang-format ~/.clang-format
+ln -s ~/editrc ~/.editrc
+ln -s ~/inputrc ~/.inputrc
+ln -s ~/vimrc ~/.vimrc
 ```
 
 vimplugs
