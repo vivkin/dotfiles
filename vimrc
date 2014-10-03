@@ -19,6 +19,7 @@ call plug#end()
 filetype plugin indent on
 syntax on
 set nocp
+set exrc
 
 set tabstop=4
 set shiftwidth=4
@@ -56,13 +57,13 @@ set background=dark
 if has("gui_running")
     set columns=180 lines=60
     colorscheme hybrid
+    set guifont=Menlo:h13
 else
     colorscheme jellybeans
 endif
 
 let NERDTreeMinimalUI=1
 let g:molokai_original=1
-let g:ctrlp_map='<Space>'
 let g:cmake_build_args='-j 9'
 let g:airline#extensions#tabline#enabled=1
 let mapleader=','
@@ -76,6 +77,7 @@ nmap <C-j> :bnext<CR>
 nmap <C-k> :bprevious<CR>
 nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
+nmap <Space> :CtrlP<CR>
 nmap <silent> <Leader>d :NERDTreeToggle<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>

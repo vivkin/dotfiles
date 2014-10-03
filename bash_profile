@@ -13,6 +13,7 @@ export HISTCONTROL=ignoreboth
 
 alias ls='ls -GF'
 alias ll='ls -lh'
+alias svn=colorsvn
 
 PATH=~/android/ndk:~/android/sdk/tools:~/android/sdk/platform-tools:~/android/apache-ant-1.9.2/bin:$PATH
 ANT_HOME=~/android/apache-ant-1.9.2
