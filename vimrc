@@ -57,7 +57,6 @@ set background=dark
 if has("gui_running")
     set columns=180 lines=60
     colorscheme hybrid
-    set guifont=Menlo:h13
 else
     colorscheme jellybeans
 endif
@@ -88,7 +87,7 @@ autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
 autocmd BufNewFile,BufReadPost *.h,*.hpp,*.cc,*.cxx,*.cpp syn keyword cppType auto
 autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=clang-format
 autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
-autocmd BufNewFile,BufReadPost *.md setl wrap
+autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
 function! SystemIncludeDirs(cc, lang, flags)
     let output = system(a:cc . ' -x ' . a:lang . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
