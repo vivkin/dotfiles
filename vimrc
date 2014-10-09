@@ -1,3 +1,7 @@
+if has("win32")
+    let &runtimepath.=',$HOME/_vim'
+endif
+
 call plug#begin('~/.vim/plugged')
 Plug 'https://github.com/tomasr/molokai'
 Plug 'https://github.com/w0ng/vim-hybrid'
@@ -58,6 +62,11 @@ set background=dark
 if has("gui_running")
     set columns=180 lines=60
     colorscheme hybrid
+    if has("win32")
+        set guifont=Consolas:h11:cRUSSIAN
+    else
+        set guifont=Menlo:h13
+    endif
 else
     colorscheme jellybeans
 endif
