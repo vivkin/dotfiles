@@ -3,23 +3,23 @@ if has("win32")
 endif
 
 call plug#begin('~/.vim/plugged')
-Plug 'https://github.com/tomasr/molokai'
-Plug 'https://github.com/w0ng/vim-hybrid'
-Plug 'https://github.com/vivkin/flatland.vim'
-Plug 'https://github.com/baskerville/bubblegum'
-Plug 'https://github.com/whatyouhide/vim-gotham'
-Plug 'https://github.com/nanotech/jellybeans.vim'
-Plug 'https://github.com/endel/vim-github-colorscheme'
-Plug 'https://github.com/altercation/vim-colors-solarized'
-Plug 'https://github.com/rking/ag.vim'
-Plug 'https://github.com/vim-jp/cpp-vim'
-Plug 'https://github.com/kien/ctrlp.vim'
-Plug 'https://github.com/bling/vim-airline'
-Plug 'https://github.com/tikhomirov/vim-glsl'
-Plug 'https://github.com/scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'https://github.com/vivkin/vim-call-cmake'
-Plug 'https://github.com/gorkunov/smartpairs.vim'
-Plug 'https://github.com/kchmck/vim-coffee-script', { 'for': 'coffe' }
+Plug 'tomasr/molokai'
+Plug 'w0ng/vim-hybrid'
+Plug 'vivkin/flatland.vim'
+Plug 'baskerville/bubblegum'
+Plug 'whatyouhide/vim-gotham'
+Plug 'nanotech/jellybeans.vim'
+Plug 'endel/vim-github-colorscheme'
+Plug 'altercation/vim-colors-solarized'
+Plug 'rking/ag.vim'
+Plug 'vim-jp/cpp-vim'
+Plug 'kien/ctrlp.vim'
+Plug 'bling/vim-airline'
+Plug 'tikhomirov/vim-glsl'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'vivkin/vim-call-cmake'
+Plug 'gorkunov/smartpairs.vim'
+Plug 'kchmck/vim-coffee-script', { 'for': 'coffe' }
 call plug#end()
 
 filetype plugin indent on
@@ -66,7 +66,7 @@ if has("gui_running")
     if has("win32")
         set guifont=Consolas:h11:cRUSSIAN
     else
-        set guifont=Menlo:h13
+        set guifont=Menlo
     endif
 else
     colorscheme jellybeans
