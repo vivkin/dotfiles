@@ -1,5 +1,17 @@
+function! SystemIncludeDirs(cc, lang, flags)
+    let output = system(a:cc . ' -x ' . a:lang . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
+    let start = matchend(output, '> search starts here:\n\s\+')
+    let end = match(output, '\nEnd of search list.', start)
+    let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
+    return substitute(dirs, '\n\s*', ',', 'g')
+endfunction()
+
 if has("win32")
     let &runtimepath.=',$HOME/_vim'
+elseif has("mac") 
+    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', 'c++', '-std=c++11 -stdlib=libc++') . ',,'
+else
+    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', 'c++', '-std=c++11') . ',,'
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -100,11 +112,3 @@ autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=cla
 autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
 autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
-function! SystemIncludeDirs(cc, lang, flags)
-    let output = system(a:cc . ' -x ' . a:lang . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
-    let start = matchend(output, '> search starts here:\n\s\+')
-    let end = match(output, '\nEnd of search list.', start)
-    let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
-    return substitute(dirs, '\n\s*', ',', 'g')
-endfunction()
-autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', 'c++', '-std=c++11 -stdlib=libc++') . ',,'
