@@ -18,6 +18,7 @@ Plug 'https://github.com/bling/vim-airline'
 Plug 'https://github.com/tikhomirov/vim-glsl'
 Plug 'https://github.com/scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'https://github.com/vivkin/vim-call-cmake'
+Plug 'https://github.com/gorkunov/smartpairs.vim'
 Plug 'https://github.com/kchmck/vim-coffee-script', { 'for': 'coffe' }
 call plug#end()
 
@@ -61,7 +62,7 @@ set guioptions=mg
 set background=dark
 if has("gui_running")
     set columns=180 lines=60
-    colorscheme hybrid
+    colorscheme gotham
     if has("win32")
         set guifont=Consolas:h11:cRUSSIAN
     else
