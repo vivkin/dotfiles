@@ -17,7 +17,7 @@ if has("unix")
 endif
 
 if has("win32")
-    let &runtimepath.=',$HOME/_vim'
+    let &runtimepath.=',$HOME/.vim'
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -83,10 +83,8 @@ if has("gui_running")
     if has("gui_macvim")
         set guifont=Sauce\ Code\ Powerline:h13
         let g:airline_powerline_fonts=1
-    elseif has("gui_gtk")
-        set guifont=Ubuntu\ Mono\ 12
     elseif has("gui_win32")
-        set guifont=Consolas:h11:cRUSSIAN
+        set guifont=Consolas:h12:cRUSSIAN
     endif
 endif
 
