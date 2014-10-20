@@ -75,16 +75,16 @@ set noswapfile
 set background=dark
 syntax on
 colorscheme gotham
-
 if has("gui_running")
     set guioptions=c
     set clipboard=unnamed
     set columns=180 lines=60
-    if has("gui_macvim")
-        set guifont=Sauce\ Code\ Powerline:h13
-        let g:airline_powerline_fonts=1
+    if has("gui_gtk")
+        set guifont=Source\ Code\ Pro\ 12,DejaVu\ Sans\ Mono\ 12,Liberation\ Mono\ 12,Ubuntu\ Mono\ 12
+    elseif has("gui_macvim")
+        set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12,Liberation\ Mono:h12,Ubuntu\ Mono:h12,Menlo:h12
     elseif has("gui_win32")
-        set guifont=Consolas:h12:cRUSSIAN
+        set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
 endif
 
