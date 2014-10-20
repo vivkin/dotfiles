@@ -76,9 +76,10 @@ set background=dark
 syntax on
 colorscheme gotham
 if has("gui_running")
+    autocmd GUIEnter * set t_vb=
     set guioptions=c
+    set guiheadroom=0
     set clipboard=unnamed
-    set columns=180 lines=60
     if has("gui_gtk")
         set guifont=Source\ Code\ Pro\ 12,DejaVu\ Sans\ Mono\ 12,Liberation\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
