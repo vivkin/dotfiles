@@ -1,23 +1,30 @@
-function! SystemIncludeDirs(cc, lang, flags)
-    let output = system(a:cc . ' -x ' . a:lang . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
-    let start = matchend(output, '> search starts here:\n\s\+')
-    let end = match(output, '\nEnd of search list.', start)
-    let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
-    return substitute(dirs, '\n\s*', ',', 'g')
-endfunction()
+set nocp
+
+if has("unix")
+    function! SystemIncludeDirs(cc, lang, flags)
+        let output = system(a:cc . ' -x ' . a:lang . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
+        let start = matchend(output, '> search starts here:\n\s\+')
+        let end = match(output, '\nEnd of search list.', start)
+        let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
+        return substitute(dirs, '\n\s*', ',', 'g')
+    endfunction()
+
+    if has("mac")
+        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', 'c++', '-std=c++11 -stdlib=libc++') . ',,'
+    else
+        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', 'c++', '-std=c++11') . ',,'
+    endif
+endif
 
 if has("win32")
     let &runtimepath.=',$HOME/_vim'
-elseif has("mac") 
-    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', 'c++', '-std=c++11 -stdlib=libc++') . ',,'
-else
-    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', 'c++', '-std=c++11') . ',,'
 endif
 
 call plug#begin('~/.vim/plugged')
 Plug 'tomasr/molokai'
 Plug 'w0ng/vim-hybrid'
 Plug 'vivkin/flatland.vim'
+Plug 'jordwalke/flatlandia'
 Plug 'baskerville/bubblegum'
 Plug 'whatyouhide/vim-gotham'
 Plug 'nanotech/jellybeans.vim'
@@ -34,16 +41,12 @@ Plug 'gorkunov/smartpairs.vim'
 Plug 'kchmck/vim-coffee-script', { 'for': 'coffe' }
 call plug#end()
 
-filetype plugin indent on
-syntax on
-set nocp
-set exrc
-
 set tabstop=4
 set shiftwidth=4
 set expandtab
 set smartindent
 set cinoptions=:0,l1,g0,N-s,(0
+filetype plugin indent on
 
 set cursorline
 set number
@@ -69,19 +72,22 @@ set autoread
 set autowrite
 set noswapfile
 
-set clipboard=unnamed
-set guioptions=mg
 set background=dark
+syntax on
+colorscheme gotham
+
 if has("gui_running")
+    set guioptions=c
+    set clipboard=unnamed
     set columns=180 lines=60
-    colorscheme gotham
-    if has("win32")
+    if has("gui_macvim")
+        set guifont=Sauce\ Code\ Powerline:h13
+        let g:airline_powerline_fonts=1
+    elseif has("gui_gtk")
+        set guifont=Ubuntu\ Mono\ 12
+    elseif has("gui_win32")
         set guifont=Consolas:h11:cRUSSIAN
-    else
-        set guifont=Menlo
     endif
-else
-    colorscheme jellybeans
 endif
 
 let NERDTreeMinimalUI=1
@@ -90,8 +96,6 @@ let g:cmake_build_args='-j 9'
 let g:airline#extensions#tabline#enabled=1
 let mapleader=','
 
-map <F1> :set background=dark<CR>
-map <F2> :set background=light<CR>
 nmap K i<CR><ESC>
 nmap cn :cnext<CR>
 nmap cp :cprev<CR>
@@ -112,3 +116,6 @@ autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=cla
 autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
 autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
+
+set exrc
+set secure
