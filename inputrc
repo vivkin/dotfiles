@@ -1,11 +1,12 @@
+set completion-ignore-case on
+set completion-query-items 192
 set editing-mode vi
-$if mode=vi
+set match-hidden-files off
+set show-all-if-ambiguous on
+set visible-stats on
 set keymap vi-command
-# these are for vi-command mode
-"\e[A": history-search-backward
-"\e[B": history-search-forward
+"/": reverse-search-history
+"?": forward-search-history
+"\C-n": menu-complete
 set keymap vi-insert
-# these are for vi-insert mode
-"\e[A": history-search-backward
-"\e[B": history-search-forward
-$endif
+"\C-n": menu-complete
