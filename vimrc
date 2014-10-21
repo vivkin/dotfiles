@@ -1,4 +1,4 @@
-set nocp
+    set nocp
 
 if has("unix")
     function! SystemIncludeDirs(cc, lang, flags)
@@ -72,8 +72,9 @@ set autoread
 set autowrite
 set noswapfile
 
-set background=dark
 syntax on
+set t_Co=256
+set background=dark
 colorscheme gotham
 if has("gui_running")
     autocmd GUIEnter * set t_vb=

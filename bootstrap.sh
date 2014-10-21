@@ -4,7 +4,7 @@ for file in bash_profile bashrc clang-format editrc inputrc vimrc; do
   if [ -h ~/.$file ]; then
     rm ~/.$file
   elif [ -f ~/.$file ]; then 
-    mv ~/.$file ~/.$file.backup
+    mv ~/.$file ~/.$file.old
   fi
   ln -s ~/dotfiles/$file ~/.$file
 done
