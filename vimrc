@@ -75,7 +75,7 @@ set noswapfile
 syntax on
 set t_Co=256
 set background=dark
-colorscheme gotham
+colorscheme hybrid
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
     set guioptions=c
