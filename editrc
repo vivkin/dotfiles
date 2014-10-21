@@ -1,1 +1,3 @@
 bind -v
+history size 2048
+history unique 1
