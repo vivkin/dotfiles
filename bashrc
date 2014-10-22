@@ -1,7 +1,9 @@
+# vim:ts=2:sw=2:et
+
 PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
-export GREP_OPTIONS='--color=auto'
 export EDITOR=vim
+export GREP_OPTIONS='--color=auto'
 
 # history
 shopt -s histappend
@@ -18,6 +20,16 @@ fi
 alias l='ls -lh'
 alias la='ls -A'
 alias ll='ls -lA'
+
+# private bin
+if [ -d "$HOME/bin" ]; then
+  PATH="$HOME/bin:$PATH"
+fi
+
+# android ndk/sdk
+if [ -x ~/android ]; then
+  export PATH="$HOME/android/ndk:$HOME/android/sdk/tools:$HOME/android/sdk/platform-tools:$PATH"
+fi
 
 # homebrew
 if [ -x ~/.linuxbrew ]; then
@@ -39,6 +51,3 @@ fi
 if [ -e "$HOME/.ssh/config" ]; then
   complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2 | tr ' ' '\n')" scp sftp ssh;
 fi
-
-export ANT_HOME=~/android/apache-ant-1.9.2
-export PATH=~/android/ndk:~/android/sdk/tools:~/android/sdk/platform-tools:~/android/apache-ant-1.9.2/bin:$PATH
