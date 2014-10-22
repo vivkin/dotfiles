@@ -22,20 +22,20 @@ alias la='ls -A'
 alias ll='ls -lA'
 
 # private bin
-if [ -d "$HOME/bin" ]; then
-  PATH="$HOME/bin:$PATH"
+if [ -d ~/bin ]; then
+  export PATH="~/bin:$PATH"
 fi
 
 # android ndk/sdk
-if [ -x ~/android ]; then
-  export PATH="$HOME/android/ndk:$HOME/android/sdk/tools:$HOME/android/sdk/platform-tools:$PATH"
+if [ -d ~/android ]; then
+  export PATH="~/android/ndk:~/android/sdk/tools:~/android/sdk/platform-tools:$PATH"
 fi
 
 # homebrew
-if [ -x ~/.linuxbrew ]; then
-  export PATH="$HOME/.linuxbrew/bin:$PATH"
-  export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-  export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+if [ -d ~/.linuxbrew ]; then
+  export PATH="~/.linuxbrew/bin:$PATH"
+  export MANPATH="~/.linuxbrew/share/man:$MANPATH"
+  export INFOPATH="~/.linuxbrew/share/info:$INFOPATH"
 fi
 
 # add tab completion for many Bash commands
@@ -48,6 +48,6 @@ elif [ -f /etc/bash_completion ]; then
 fi
 
 # add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
-if [ -e "$HOME/.ssh/config" ]; then
+if [ -e "~/.ssh/config" ]; then
   complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2 | tr ' ' '\n')" scp sftp ssh;
 fi
