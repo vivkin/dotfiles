@@ -39,7 +39,7 @@ if [ -d ~/.linuxbrew ]; then
 fi
 
 # add tab completion for many Bash commands
-if which brew > /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
+if which brew &> /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 elif [ -f /usr/share/bash-completion/bash_completion ]; then
   . /usr/share/bash-completion/bash_completion
