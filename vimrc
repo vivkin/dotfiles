@@ -31,7 +31,7 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'endel/vim-github-colorscheme'
 Plug 'altercation/vim-colors-solarized'
 Plug 'rking/ag.vim'
-Plug 'vim-jp/cpp-vim'
+Plug 'vivkin/cpp-vim'
 Plug 'kien/ctrlp.vim'
 Plug 'bling/vim-airline'
 Plug 'bling/vim-bufferline'
@@ -113,7 +113,6 @@ nmap <silent> <Leader>q :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 
 autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
-autocmd BufNewFile,BufReadPost *.h,*.hpp,*.cc,*.cxx,*.cpp syn keyword cppType auto
 autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=clang-format
 autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
 autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
