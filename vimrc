@@ -24,7 +24,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'tomasr/molokai'
 Plug 'w0ng/vim-hybrid'
 Plug 'vivkin/flatland.vim'
-Plug 'jordwalke/flatlandia'
 Plug 'baskerville/bubblegum'
 Plug 'whatyouhide/vim-gotham'
 Plug 'nanotech/jellybeans.vim'
@@ -38,8 +37,6 @@ Plug 'bling/vim-bufferline'
 Plug 'tikhomirov/vim-glsl'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'vivkin/vim-call-cmake'
-Plug 'gorkunov/smartpairs.vim'
-Plug 'kchmck/vim-coffee-script', { 'for': 'coffe' }
 call plug#end()
 
 set tabstop=4
@@ -72,6 +69,7 @@ set visualbell t_vb=
 set autoread
 set autowrite
 set noswapfile
+set nowritebackup
 
 syntax on
 set t_Co=256
@@ -93,7 +91,6 @@ endif
 
 let NERDTreeMinimalUI=1
 let g:molokai_original=1
-let g:cmake_build_args='-j 9'
 let g:bufferline_rotate=2
 let g:airline#extensions#bufferline#enabled=0
 let mapleader=','
