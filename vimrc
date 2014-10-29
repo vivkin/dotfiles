@@ -72,9 +72,6 @@ set noswapfile
 set nowritebackup
 
 syntax on
-set t_Co=256
-set background=dark
-colorscheme hybrid
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
     set guioptions=c
@@ -87,6 +84,12 @@ if has("gui_running")
     elseif has("gui_win32")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
+    set background=light
+    colorscheme solarized
+else
+    set t_Co=256
+    set background=dark
+    colorscheme jellybeans
 endif
 
 let NERDTreeMinimalUI=1
