@@ -33,7 +33,6 @@ Plug 'rking/ag.vim'
 Plug 'vivkin/cpp-vim'
 Plug 'kien/ctrlp.vim'
 Plug 'bling/vim-airline'
-Plug 'bling/vim-bufferline'
 Plug 'tikhomirov/vim-glsl'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'vivkin/vim-call-cmake'
@@ -94,8 +93,7 @@ endif
 
 let NERDTreeMinimalUI=1
 let g:molokai_original=1
-let g:bufferline_rotate=2
-let g:airline#extensions#bufferline#enabled=0
+let g:airline#extensions#tabline#enabled=1
 let mapleader=','
 
 nmap K i<CR><ESC>
