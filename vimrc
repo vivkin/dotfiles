@@ -49,7 +49,8 @@ set cursorline
 set number
 set showcmd
 set laststatus=2
-set listchars=tab:>-,eol:$,trail:-
+set encoding=utf-8
+set listchars=tab:↹␠,trail:·,eol:␤
 
 set nowrap
 set nostartofline
