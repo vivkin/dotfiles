@@ -1,8 +1,8 @@
 set nocompatible
 
 if has("unix")
-    function! SystemIncludeDirs(cc, lang, flags)
-        let output = system(a:cc . ' -x ' . a:lang . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
+    function! SystemIncludeDirs(cc, flags)
+        let output = system(a:cc . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
         let start = matchend(output, '> search starts here:\n\s\+')
         let end = match(output, '\nEnd of search list.', start)
         let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
@@ -10,9 +10,9 @@ if has("unix")
     endfunction()
 
     if has("mac")
-        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', 'c++', '-std=c++11 -stdlib=libc++') . ',,'
+        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', '-x c++ -std=c++11 -stdlib=libc++') . ',,'
     else
-        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', 'c++', '-std=c++11') . ',,'
+        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
     endif
 endif
 
@@ -84,12 +84,10 @@ if has("gui_running")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
     set background=light
-    colorscheme solarized
 else
-    set t_Co=256
     set background=dark
-    colorscheme jellybeans
 endif
+colorscheme solarized
 
 let NERDTreeMinimalUI=1
 let g:molokai_original=1
@@ -103,11 +101,10 @@ nmap <C-j> :bnext<CR>
 nmap <C-k> :bprevious<CR>
 nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
-nmap <Space> :CtrlP<CR>
-nmap <silent> <Leader>d :NERDTreeToggle<CR>
+nmap <silent> <Leader>n :NERDTreeToggle<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
-nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
-nmap <silent> <Leader>q :copen<CR>
+nmap <silent> <Leader>b :make<CR>:botright cwindow<CR>
+nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 
 autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
