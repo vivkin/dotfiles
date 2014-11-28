@@ -103,7 +103,7 @@ nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
 nmap <silent> <Leader>n :NERDTreeToggle<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
-nmap <silent> <Leader>b :make<CR>:botright cwindow<CR>
+nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 
