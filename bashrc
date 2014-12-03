@@ -21,16 +21,6 @@ alias l='ls -lh'
 alias la='ls -A'
 alias ll='ls -lA'
 
-# private bin
-if [ -d ~/bin ]; then
-  export PATH="~/bin:$PATH"
-fi
-
-# android ndk/sdk
-if [ -d ~/android ]; then
-  export PATH="~/android/ndk:~/android/sdk/tools:~/android/sdk/platform-tools:$PATH"
-fi
-
 # homebrew
 if [ -d ~/.linuxbrew ]; then
   export PATH="~/.linuxbrew/bin:$PATH"
@@ -51,3 +41,6 @@ fi
 if [ -e "~/.ssh/config" ]; then
   complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2 | tr ' ' '\n')" scp sftp ssh;
 fi
+
+# android ndk/sdk
+export ANDROID_HOME=/usr/local/opt/android-sdk
