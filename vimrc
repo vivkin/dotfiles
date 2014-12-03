@@ -34,7 +34,7 @@ Plug 'vivkin/cpp-vim'
 Plug 'kien/ctrlp.vim'
 Plug 'bling/vim-airline'
 Plug 'tikhomirov/vim-glsl'
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree'
 Plug 'vivkin/vim-call-cmake'
 call plug#end()
 
@@ -72,6 +72,7 @@ set noswapfile
 set nowritebackup
 
 syntax on
+set background=dark
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
     set guioptions=c
@@ -84,11 +85,10 @@ if has("gui_running")
     elseif has("gui_win32")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
-    set background=light
+    colorscheme bubblegum
 else
-    set background=dark
+    colorscheme solarized
 endif
-colorscheme solarized
 
 let NERDTreeMinimalUI=1
 let g:molokai_original=1
@@ -103,7 +103,9 @@ nmap <C-k> :bprevious<CR>
 nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
 nmap <silent> <Leader>n :NERDTreeToggle<CR>
+nmap <silent> <Leader>N :NERDTree %<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
+nmap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
 nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
