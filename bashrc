@@ -28,6 +28,9 @@ if [ -d ~/.linuxbrew ]; then
   export INFOPATH="~/.linuxbrew/share/info:$INFOPATH"
 fi
 
+export ANDROID_HOME=/usr/local/opt/android-sdk
+export MONO_GAC_PREFIX="/usr/local"
+
 # add tab completion for many Bash commands
 if which brew &> /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
@@ -41,6 +44,3 @@ fi
 if [ -e "~/.ssh/config" ]; then
   complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2 | tr ' ' '\n')" scp sftp ssh;
 fi
-
-# android ndk/sdk
-export ANDROID_HOME=/usr/local/opt/android-sdk
