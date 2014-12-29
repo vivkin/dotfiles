@@ -70,6 +70,8 @@ set autoread
 set autowrite
 set noswapfile
 set nowritebackup
+set undofile
+set undodir=~/.vimundo
 
 syntax on
 set background=dark
