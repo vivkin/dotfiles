@@ -33,6 +33,7 @@ Plug 'rking/ag.vim'
 Plug 'vivkin/cpp-vim'
 Plug 'kien/ctrlp.vim'
 Plug 'bling/vim-airline'
+Plug 'tpope/vim-surround'
 Plug 'tikhomirov/vim-glsl'
 Plug 'scrooloose/nerdtree'
 Plug 'vivkin/vim-call-cmake'
@@ -87,7 +88,7 @@ if has("gui_running")
     elseif has("gui_win32")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
-    colorscheme bubblegum
+    colorscheme flatland
 else
     colorscheme solarized
 endif
