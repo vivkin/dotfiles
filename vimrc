@@ -14,6 +14,21 @@ if has("unix")
     else
         autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
     endif
+
+    function! CMake(build_dir, ...)
+        if filereadable("CMakeLists.txt")
+            let build_dir = fnameescape(a:build_dir)
+            execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
+            if v:shell_error == 0
+                let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
+            endif
+        else
+            echoerr 'CMakeLists.txt not found'
+        endif
+    endfunction
+
+    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-4.9 -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
+    command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
 endif
 
 if has("win32")
@@ -36,7 +51,7 @@ Plug 'bling/vim-airline'
 Plug 'tpope/vim-surround'
 Plug 'tikhomirov/vim-glsl'
 Plug 'scrooloose/nerdtree'
-Plug 'vivkin/vim-call-cmake'
+"Plug 'vivkin/vim-call-cmake'
 call plug#end()
 
 set tabstop=4
@@ -75,7 +90,6 @@ set undofile
 set undodir=~/.vimundo
 
 syntax on
-set background=dark
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
     set guioptions=c
@@ -84,12 +98,14 @@ if has("gui_running")
     if has("gui_gtk")
         set guifont=Source\ Code\ Pro\ 12,DejaVu\ Sans\ Mono\ 12,Liberation\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set guifont=Source\ Code\ Pro:h13,DejaVu\ Sans\ Mono:h13,Liberation\ Mono:h13,Ubuntu\ Mono:h13,Menlo:h13
+        set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12,Liberation\ Mono:h12,Ubuntu\ Mono:h12,Menlo:h12
     elseif has("gui_win32")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
-    colorscheme flatland
+    set background=dark
+    colorscheme hybrid
 else
+    set background=dark
     colorscheme solarized
 endif
 
