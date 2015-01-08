@@ -67,6 +67,7 @@ set showcmd
 set laststatus=2
 set encoding=utf-8
 set listchars=tab:↹␠,trail:·,eol:␤
+set matchpairs=(:),{:},[:],<:>
 
 set nowrap
 set nostartofline
