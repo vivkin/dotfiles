@@ -107,7 +107,7 @@ if has("gui_running")
     colorscheme hybrid
 else
     set background=dark
-    colorscheme solarized
+    colorscheme jellybeans
 endif
 
 let NERDTreeMinimalUI=1
@@ -127,6 +127,7 @@ nmap <silent> <Leader>N :NERDTree %<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nmap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
 nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
+nmap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 
