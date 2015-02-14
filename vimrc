@@ -36,22 +36,25 @@ if has("win32")
 endif
 
 call plug#begin('~/.vim/plugged')
-Plug 'tomasr/molokai'
-Plug 'w0ng/vim-hybrid'
-Plug 'vivkin/flatland.vim'
-Plug 'baskerville/bubblegum'
-Plug 'whatyouhide/vim-gotham'
-Plug 'nanotech/jellybeans.vim'
-Plug 'endel/vim-github-colorscheme'
+Plug 'ajh17/Spacegray.vim'
 Plug 'altercation/vim-colors-solarized'
-Plug 'rking/ag.vim'
-Plug 'vivkin/cpp-vim'
-Plug 'kien/ctrlp.vim'
+Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
-Plug 'tpope/vim-surround'
-Plug 'tikhomirov/vim-glsl'
+Plug 'endel/vim-github-colorscheme'
+Plug 'gosukiwi/vim-atom-dark'
+Plug 'kien/ctrlp.vim'
+Plug 'nanotech/jellybeans.vim'
+Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree'
-"Plug 'vivkin/vim-call-cmake'
+Plug 'therubymug/vim-pyte'
+Plug 'tikhomirov/vim-glsl'
+Plug 'tomasr/molokai'
+Plug 'tpope/vim-surround'
+Plug 'vim-scripts/mayansmoke'
+Plug 'vivkin/cpp-vim'
+Plug 'vivkin/flatland.vim'
+Plug 'w0ng/vim-hybrid'
+Plug 'whatyouhide/vim-gotham'
 call plug#end()
 
 set tabstop=4
@@ -103,8 +106,9 @@ if has("gui_running")
     elseif has("gui_win32")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
-    set background=dark
-    colorscheme hybrid
+    set background=light
+    let g:airline_theme='light'
+    colorscheme mayansmoke
 else
     set background=dark
     colorscheme jellybeans
