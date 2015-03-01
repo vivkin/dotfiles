@@ -7,7 +7,9 @@ set visible-stats on
 set keymap vi-command
 "/": reverse-search-history
 "?": forward-search-history
-"v": possible-command-completions
-"\C-n": complete-filename
+"v": possible-completions
+"\C-i": vi-complete
+"\C-n": menu-complete
 set keymap vi-insert
-"\C-n": complete-filename
+"\C-i": vi-complete
+"\C-n": menu-complete
