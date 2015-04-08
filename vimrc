@@ -27,7 +27,7 @@ if has("unix")
         endif
     endfunction
 
-    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-4.9 -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
+    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
     command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
 endif
 
@@ -107,8 +107,8 @@ if has("gui_running")
         set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
     endif
     set background=light
-    let g:airline_theme='light'
-    colorscheme mayansmoke
+    let g:airline_theme='base16'
+    colorscheme bubblegum-256-light
 else
     set background=dark
     colorscheme jellybeans
