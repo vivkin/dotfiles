@@ -1,0 +1,6 @@
+let vimpager_use_gvim=1
+let vimpager_disable_x11=1
+let vimpager_scrolloff=0
+set lines=512
+colorscheme desert
+nnoremap <CR> :nohlsearch<CR><CR>

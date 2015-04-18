@@ -86,24 +86,8 @@ set nowritebackup
 set undofile
 set undodir=~/.vimundo
 
-if has("gui_running")
-    autocmd GUIEnter * set t_vb=
-    set clipboard=unnamed
-    set guioptions=c
-    set guiheadroom=0
-    if has("gui_win32")
-        set guifont=Consolas:h12:cRUSSIAN
-    elseif has("gui_gtk")
-        set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
-    elseif has("gui_macvim")
-        set guifont=Office\ Code\ Pro\ Light:h12,Menlo:h12
-    endif
-    set background=dark
-    colorscheme base16-harmonic16
-else
-    set background=dark
-    colorscheme jellybeans
-endif
+set background=dark
+colorscheme jellybeans
 
 let g:airline#extensions#tabline#enabled=1
 let NERDTreeMinimalUI=1
