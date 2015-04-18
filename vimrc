@@ -9,12 +9,6 @@ if has("unix")
         return substitute(dirs, '\n\s*', ',', 'g')
     endfunction()
 
-    if has("mac")
-        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('clang', '-x c++ -std=c++11 -stdlib=libc++') . ',,'
-    else
-        autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
-    endif
-
     function! CMake(build_dir, ...)
         if filereadable("CMakeLists.txt")
             let build_dir = fnameescape(a:build_dir)
@@ -27,12 +21,9 @@ if has("unix")
         endif
     endfunction
 
-    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
-    command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo') 
-endif
-
-if has("win32")
-    let &runtimepath.=',$HOME/.vim'
+    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
+    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+    command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -40,15 +31,15 @@ Plug 'ajh17/Spacegray.vim'
 Plug 'altercation/vim-colors-solarized'
 Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
-Plug 'endel/vim-github-colorscheme'
+Plug 'chriskempson/base16-vim'
 Plug 'gosukiwi/vim-atom-dark'
 Plug 'kien/ctrlp.vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'therubymug/vim-pyte'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tomasr/molokai'
+Plug 'tommcdo/vim-exchange'
 Plug 'tpope/vim-surround'
 Plug 'vim-scripts/mayansmoke'
 Plug 'vivkin/cpp-vim'
@@ -57,12 +48,14 @@ Plug 'w0ng/vim-hybrid'
 Plug 'whatyouhide/vim-gotham'
 call plug#end()
 
+filetype plugin indent on
+syntax on
+
 set tabstop=4
 set shiftwidth=4
 set expandtab
 set smartindent
 set cinoptions=:0,l1,g0,N-s,(0
-filetype plugin indent on
 
 set cursorline
 set number
@@ -93,30 +86,27 @@ set nowritebackup
 set undofile
 set undodir=~/.vimundo
 
-syntax on
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
+    set clipboard=unnamed
     set guioptions=c
     set guiheadroom=0
-    set clipboard=unnamed
-    if has("gui_gtk")
-        set guifont=Source\ Code\ Pro\ 12,DejaVu\ Sans\ Mono\ 12,Liberation\ Mono\ 12,Ubuntu\ Mono\ 12
+    if has("gui_win32")
+        set guifont=Consolas:h12:cRUSSIAN
+    elseif has("gui_gtk")
+        set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12,Liberation\ Mono:h12,Ubuntu\ Mono:h12,Menlo:h12
-    elseif has("gui_win32")
-        set guifont=Source\ Code\ Pro:h12,DejaVu\ Sans\ Mono:h12:cRUSSIAN,Liberation\ Mono:h12:cRUSSIAN,Ubuntu\ Mono:h12:cRUSSIAN,Consolas:h12:cRUSSIAN
+        set guifont=Office\ Code\ Pro\ Light:h12,Menlo:h12
     endif
-    set background=light
-    let g:airline_theme='base16'
-    colorscheme bubblegum-256-light
+    set background=dark
+    colorscheme base16-harmonic16
 else
     set background=dark
     colorscheme jellybeans
 endif
 
-let NERDTreeMinimalUI=1
-let g:molokai_original=1
 let g:airline#extensions#tabline#enabled=1
+let NERDTreeMinimalUI=1
 let mapleader=','
 
 nmap K i<CR><ESC>
