@@ -1,31 +1,5 @@
 set nocompatible
 
-if has("unix")
-    function! SystemIncludeDirs(cc, flags)
-        let output = system(a:cc . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
-        let start = matchend(output, '> search starts here:\n\s\+')
-        let end = match(output, '\nEnd of search list.', start)
-        let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
-        return substitute(dirs, '\n\s*', ',', 'g')
-    endfunction()
-
-    function! CMake(build_dir, ...)
-        if filereadable("CMakeLists.txt")
-            let build_dir = fnameescape(a:build_dir)
-            execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
-            if v:shell_error == 0
-                let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
-            endif
-        else
-            echoerr 'CMakeLists.txt not found'
-        endif
-    endfunction
-
-    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
-    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-    command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-endif
-
 call plug#begin('~/.vim/plugged')
 Plug 'ajh17/Spacegray.vim'
 Plug 'altercation/vim-colors-solarized'
@@ -114,6 +88,52 @@ autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=cla
 autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
 autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
+
+if has("gui_running")
+    if has("gui_win32")
+        set guifont=Consolas:h12:cRUSSIAN
+    elseif has("gui_gtk")
+        set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
+    elseif has("gui_macvim")
+        set guifont=Office\ Code\ Pro\ Light:h12,Menlo:h12
+    endif
+    set guioptions=c
+    set guiheadroom=0
+
+    set lines=512
+    set columns=160
+    set clipboard=unnamed
+    set background=dark
+    colorscheme base16-harmonic16
+
+    autocmd GUIEnter * set t_vb=
+endif
+
+if has("unix")
+    function! SystemIncludeDirs(cc, flags)
+        let output = system(a:cc . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
+        let start = matchend(output, '> search starts here:\n\s\+')
+        let end = match(output, '\nEnd of search list.', start)
+        let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
+        return substitute(dirs, '\n\s*', ',', 'g')
+    endfunction()
+
+    function! CMake(build_dir, ...)
+        if filereadable("CMakeLists.txt")
+            let build_dir = fnameescape(a:build_dir)
+            execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
+            if v:shell_error == 0
+                let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
+            endif
+        else
+            echoerr 'CMakeLists.txt not found'
+        endif
+    endfunction
+
+    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
+    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+    command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+endif
 
 set exrc
 set secure
