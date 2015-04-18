@@ -61,9 +61,6 @@ set nowritebackup
 set undofile
 set undodir=~/.vimundo
 
-set background=dark
-colorscheme jellybeans
-
 let g:airline#extensions#tabline#enabled=1
 let NERDTreeMinimalUI=1
 let mapleader=','
@@ -91,6 +88,8 @@ autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
 
 if has("gui_running")
+    autocmd GUIEnter * set t_vb=
+
     if has("gui_win32")
         set guifont=Consolas:h12:cRUSSIAN
     elseif has("gui_gtk")
@@ -104,10 +103,11 @@ if has("gui_running")
     set lines=512
     set columns=160
     set clipboard=unnamed
+    set background=light
+    colorscheme solarized
+else
     set background=dark
-    colorscheme base16-harmonic16
-
-    autocmd GUIEnter * set t_vb=
+    colorscheme jellybeans
 endif
 
 if has("unix")
