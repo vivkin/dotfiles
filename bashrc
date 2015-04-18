@@ -1,12 +1,19 @@
 # vim:ts=2:sw=2:et
 
 PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-
-export EDITOR=vim
 export GREP_OPTIONS='--color=auto'
 export GCC_COLORS=1
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export MONO_GAC_PREFIX="/usr/local"
+
+# editor
+if which -s mvim; then
+  export EDITOR=mvim
+  alias ee='open -a MacVim'
+else
+  export EDITOR=vim
+fi
+alias e='$EDITOR'
 
 # colored ls and aliases
 if [ $(uname) == Darwin ]; then

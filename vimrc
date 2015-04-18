@@ -6,8 +6,8 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
 Plug 'bruno-/vim-man'
-Plug 'chriskempson/base16-vim'
 Plug 'gosukiwi/vim-atom-dark'
+Plug 'jeetsukumaran/vim-nefertiti'
 Plug 'kien/ctrlp.vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'rking/ag.vim'
@@ -16,11 +16,9 @@ Plug 'tikhomirov/vim-glsl'
 Plug 'tomasr/molokai'
 Plug 'tommcdo/vim-exchange'
 Plug 'tpope/vim-surround'
-Plug 'vim-scripts/mayansmoke'
 Plug 'vivkin/cpp-vim'
 Plug 'vivkin/flatland.vim'
 Plug 'w0ng/vim-hybrid'
-Plug 'whatyouhide/vim-gotham'
 call plug#end()
 
 filetype plugin indent on
@@ -95,7 +93,8 @@ if has("gui_running")
     elseif has("gui_gtk")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set guifont=Office\ Code\ Pro\ Light:h12,Menlo:h12
+        set macmeta
+        set guifont=Office\ Code\ Pro:h12,Menlo:h12
     endif
     set guioptions=c
     set guiheadroom=0
@@ -103,8 +102,9 @@ if has("gui_running")
     set lines=512
     set columns=160
     set clipboard=unnamed
-    set background=light
-    colorscheme solarized
+    set background=dark
+    colorscheme nefertiti
+    let g:airline_theme='monochrome'
 else
     set background=dark
     colorscheme jellybeans
