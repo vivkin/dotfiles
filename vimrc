@@ -1,11 +1,13 @@
 set nocompatible
 
+filetype plugin indent on
+runtime! ftplugin/man.vim
+
 call plug#begin('~/.vim/plugged')
 Plug 'ajh17/Spacegray.vim'
 Plug 'altercation/vim-colors-solarized'
 Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
-Plug 'bruno-/vim-man'
 Plug 'gosukiwi/vim-atom-dark'
 Plug 'jeetsukumaran/vim-nefertiti'
 Plug 'kien/ctrlp.vim'
@@ -20,9 +22,6 @@ Plug 'vivkin/cpp-vim'
 Plug 'vivkin/flatland.vim'
 Plug 'w0ng/vim-hybrid'
 call plug#end()
-
-filetype plugin indent on
-syntax on
 
 set tabstop=4
 set shiftwidth=4
@@ -85,6 +84,7 @@ autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
 autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
 
+syntax on
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
 
