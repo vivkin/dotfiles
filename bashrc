@@ -1,18 +1,25 @@
 # vim:ts=2:sw=2:et
 
-if [ "${SSH_TTY}" ]; then
-  hcolor="\033[01;31m"
+if [ "${USER}" == "root" ]; then
+  ucolor="\033[31m"
 else
-  hcolor="\033[01;32m"
+  ucolor="\033[32m"
 fi
-export PS1="\[\033[01;32m\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+
+if [ "${SSH_TTY}" ]; then
+  hcolor="\033[31m"
+else
+  hcolor="\033[32m"
+fi
+
+export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[00m\]\$ "
 export GREP_OPTIONS='--color=auto'
 export GCC_COLORS=1
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export MONO_GAC_PREFIX="/usr/local"
 
 # editor
-if which -s mvim; then
+if which mvim &> /dev/null; then
   export EDITOR=mvim
   alias ee='open -a MacVim'
 else
