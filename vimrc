@@ -17,6 +17,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tomasr/molokai'
 Plug 'tommcdo/vim-exchange'
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vivkin/cpp-vim'
 Plug 'vivkin/flatland.vim'
@@ -58,7 +59,7 @@ set nowritebackup
 set undofile
 set undodir=~/.vimundo
 
-let g:airline#extensions#tabline#enabled=1
+let g:airline_extensions = ['tabline', 'branch']
 let NERDTreeMinimalUI=1
 let mapleader=','
 
@@ -94,7 +95,8 @@ if has("gui_running")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
         set macmeta
-        set guifont=Office\ Code\ Pro:h12,Menlo:h12
+        set guifont=Office\ Code\ Pro:h13,Menlo:h13
+        let g:airline_powerline_fonts=1
     endif
     set guioptions=c
     set guiheadroom=0
@@ -118,6 +120,7 @@ if has("unix")
         let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
         return substitute(dirs, '\n\s*', ',', 'g')
     endfunction()
+    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
 
     function! CMake(build_dir, ...)
         if filereadable("CMakeLists.txt")
@@ -130,8 +133,6 @@ if has("unix")
             echoerr 'CMakeLists.txt not found'
         endif
     endfunction
-
-    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
     command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
     command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 endif
