@@ -1,6 +1,11 @@
 # vim:ts=2:sw=2:et
 
-PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+if [ "${SSH_TTY}" ]; then
+  hcolor="\033[01;31m"
+else
+  hcolor="\033[01;32m"
+fi
+export PS1="\[\033[01;32m\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
 export GREP_OPTIONS='--color=auto'
 export GCC_COLORS=1
 export ANDROID_HOME=/usr/local/opt/android-sdk
