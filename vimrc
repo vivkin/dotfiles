@@ -4,6 +4,7 @@ filetype plugin indent on
 runtime! ftplugin/man.vim
 
 call plug#begin('~/.vim/plugged')
+Plug 'jeetsukumaran/vim-buffergator'
 Plug 'ajh17/Spacegray.vim'
 Plug 'altercation/vim-colors-solarized'
 Plug 'baskerville/bubblegum'
@@ -59,7 +60,10 @@ set nowritebackup
 set undofile
 set undodir=~/.vimundo
 
-let g:airline_extensions = ['tabline', 'branch']
+let g:airline_extensions = ['whitespace', 'tabline', 'branch']
+let g:airline_powerline_fonts=1
+let g:buffergator_autoexpand_on_split=0
+let g:buffergator_suppress_keymaps=1
 let NERDTreeMinimalUI=1
 let mapleader=','
 
@@ -70,6 +74,8 @@ nmap <C-j> :bnext<CR>
 nmap <C-k> :bprevious<CR>
 nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
+nmap <silent> <Leader>b :BuffergatorToggle<CR>
+nmap <silent> <Leader>B :BuffergatorTabsToggle<CR>
 nmap <silent> <Leader>n :NERDTreeToggle<CR>
 nmap <silent> <Leader>N :NERDTree %<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
@@ -96,7 +102,6 @@ if has("gui_running")
     elseif has("gui_macvim")
         set macmeta
         set guifont=Office\ Code\ Pro:h13,Menlo:h13
-        let g:airline_powerline_fonts=1
     endif
     set guioptions=c
     set guiheadroom=0
@@ -105,8 +110,9 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=dark
-    colorscheme nefertiti
-    let g:airline_theme='monochrome'
+    colorscheme bubblegum-256-dark
+    hi CursorLine ctermfg=NONE ctermbg=237 cterm=none guifg=NONE guibg=#3A3A3A gui=none
+    let g:airline_theme='bubblegum'
 else
     set background=dark
     colorscheme jellybeans
