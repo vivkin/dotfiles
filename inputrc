@@ -3,13 +3,5 @@ set completion-query-items 192
 set editing-mode vi
 set match-hidden-files off
 set show-all-if-ambiguous on
+set show-mode-in-prompt on
 set visible-stats on
-set keymap vi-command
-"/": reverse-search-history
-"?": forward-search-history
-"v": possible-completions
-"\C-i": vi-complete
-"\C-n": menu-complete
-set keymap vi-insert
-"\C-i": vi-complete
-"\C-n": menu-complete
