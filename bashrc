@@ -13,19 +13,20 @@ else
 fi
 
 export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[00m\]\$ "
-export GREP_OPTIONS='--color=auto'
 export GCC_COLORS=1
+export GREP_OPTIONS="--color=auto"
 export ANDROID_HOME=/usr/local/opt/android-sdk
+export NDK_ROOT=/usr/local/opt/android-ndk
 export MONO_GAC_PREFIX="/usr/local"
 
 # editor
 if which mvim &> /dev/null; then
   export EDITOR=mvim
-  alias ee='open -a MacVim'
+  alias e="open -a MacVim"
 else
   export EDITOR=vim
+  alias e="$EDITOR"
 fi
-alias e='$EDITOR'
 
 # colored ls and aliases
 if [ $(uname) == Darwin ]; then
