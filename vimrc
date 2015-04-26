@@ -27,6 +27,7 @@ set expandtab
 set smartindent
 set cinoptions=:0,l1,g0,N-s,(0
 
+set ttyfast
 set cursorline
 set number
 set showcmd
@@ -55,6 +56,7 @@ set noswapfile
 set nowritebackup
 set undofile
 set undodir=~/.vimundo
+set history=150
 
 let g:airline_extensions = ['whitespace', 'tabline', 'branch']
 let g:airline_powerline_fonts=1
@@ -110,6 +112,7 @@ if has("gui_running")
     hi CursorLine ctermfg=NONE ctermbg=237 cterm=none guifg=NONE guibg=#3A3A3A gui=none
     let g:airline_theme='bubblegum'
 else
+    set t_Co=256
     set background=dark
     colorscheme jellybeans
 endif
