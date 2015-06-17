@@ -4,6 +4,7 @@ filetype plugin indent on
 runtime! ftplugin/man.vim
 
 call plug#begin('~/.vim/plugged')
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'altercation/vim-colors-solarized'
 Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
@@ -11,6 +12,7 @@ Plug 'jeetsukumaran/vim-buffergator'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'nanotech/jellybeans.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
@@ -107,10 +109,10 @@ if has("gui_running")
     set lines=512
     set columns=160
     set clipboard=unnamed
-    set background=dark
-    colorscheme bubblegum-256-dark
-    hi CursorLine ctermfg=NONE ctermbg=237 cterm=none guifg=NONE guibg=#3A3A3A gui=none
-    let g:airline_theme='bubblegum'
+    set background=light
+    colorscheme PaperColor
+    "hi CursorLine ctermfg=NONE ctermbg=237 cterm=none guifg=NONE guibg=#3A3A3A gui=none
+    "let g:airline_theme='bubblegum'
 else
     set t_Co=256
     set background=dark

@@ -18,6 +18,7 @@ export GREP_OPTIONS="--color=auto"
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export NDK_ROOT=/usr/local/opt/android-ndk
 export MONO_GAC_PREFIX="/usr/local"
+export GOPATH=$HOME/go
 
 # editor
 if which mvim &> /dev/null; then
