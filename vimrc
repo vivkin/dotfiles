@@ -5,6 +5,7 @@ runtime! ftplugin/man.vim
 
 call plug#begin('~/.vim/plugged')
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'Wutzara/vim-materialtheme'
 Plug 'altercation/vim-colors-solarized'
 Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
@@ -110,9 +111,9 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme PaperColor
+    colorscheme materialtheme
     "hi CursorLine ctermfg=NONE ctermbg=237 cterm=none guifg=NONE guibg=#3A3A3A gui=none
-    "let g:airline_theme='bubblegum'
+    let g:airline_theme='zenburn'
 else
     set t_Co=256
     set background=dark
