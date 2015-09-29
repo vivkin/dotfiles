@@ -1,3 +1,5 @@
-bind -v
 history size 2048
 history unique 1
+bind -v
+lldb:bind ^I lldb-complete
+mysql:bind ^I rl_complete
