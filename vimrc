@@ -5,9 +5,7 @@ runtime! ftplugin/man.vim
 
 call plug#begin('~/.vim/plugged')
 Plug 'NLKNguyen/papercolor-theme'
-Plug 'Wutzara/vim-materialtheme'
 Plug 'altercation/vim-colors-solarized'
-Plug 'baskerville/bubblegum'
 Plug 'bling/vim-airline'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'kien/ctrlp.vim'
@@ -20,6 +18,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tomasr/molokai'
 Plug 'tpope/vim-fugitive'
+Plug 'vim-scripts/a.vim'
 Plug 'vivkin/cpp-vim'
 Plug 'vivkin/flatland.vim'
 Plug 'w0ng/vim-hybrid'
@@ -111,9 +110,8 @@ if has("gui_running")
     set lines=512
     set columns=160
     set clipboard=unnamed
-    set background=light
-    colorscheme materialtheme
-    "hi CursorLine ctermfg=NONE ctermbg=237 cterm=none guifg=NONE guibg=#3A3A3A gui=none
+    set background=dark
+    colorscheme PaperColor
     let g:airline_theme='zenburn'
 else
     set t_Co=256
