@@ -9,6 +9,8 @@ for file in bash_profile bashrc clang-format editrc inputrc vimrc; do
   ln -s ~/dotfiles/$file ~/.$file
 done
 
+mkdir -p ~/.vimundo
+
 if [ ! -f ~/.vim/autoload/plug.vim ]; then
   mkdir -p ~/.vim/autoload
   curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
