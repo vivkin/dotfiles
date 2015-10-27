@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for file in bash_profile bashrc clang-format editrc inputrc vimrc; do
+for file in bash_profile bashrc clang-format editrc inputrc vimrc gitconfig; do
   if [ -h ~/.$file ]; then
     rm ~/.$file
   elif [ -f ~/.$file ]; then

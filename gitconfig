@@ -1,0 +1,18 @@
+[user]
+	name = Ivan Vashchaev
+	email = vivkin@gmail.com
+[push]
+	default = simple
+[merge]
+	conflictstyle = diff3
+[color]
+	diff = true
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
