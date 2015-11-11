@@ -14,7 +14,6 @@ fi
 
 export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[00m\]\$ "
 export GCC_COLORS=1
-export GREP_OPTIONS="--color=auto"
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export NDK_ROOT=/usr/local/opt/android-ndk
 export MONO_GAC_PREFIX="/usr/local"
@@ -38,6 +37,7 @@ fi
 alias l='ls -lh'
 alias la='ls -A'
 alias ll='ls -lA'
+alias grep='grep --color=auto'
 
 # history
 shopt -s histappend
