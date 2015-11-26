@@ -8,6 +8,8 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'altercation/vim-colors-solarized'
 Plug 'bling/vim-airline'
 Plug 'jeetsukumaran/vim-buffergator'
+Plug 'joshdick/airline-onedark.vim'
+Plug 'joshdick/onedark.vim'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'nanotech/jellybeans.vim'
@@ -110,9 +112,9 @@ if has("gui_running")
     set lines=512
     set columns=160
     set clipboard=unnamed
-    set background=dark
-    colorscheme PaperColor
-    let g:airline_theme='zenburn'
+    set background=light
+    colorscheme onedark
+    let g:airline_theme='onedark'
 else
     set t_Co=256
     set background=dark
