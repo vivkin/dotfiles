@@ -65,6 +65,7 @@ let g:airline_extensions = ['whitespace', 'tabline', 'branch']
 let g:airline_powerline_fonts=1
 let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
+let g:ag_prg='ag --vimgrep --ignore tags'
 let NERDTreeMinimalUI=1
 let mapleader=','
 
@@ -89,7 +90,8 @@ nnoremap <CR> :nohlsearch<CR><CR>
 autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
 autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=clang-format
 autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
-autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap
+autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap linebreak
+autocmd BufNewFile,BufReadPost CMakeLists.txt set nowrap
 autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
 
 syntax on
@@ -107,12 +109,11 @@ if has("gui_running")
     set guioptions=c
     set guiheadroom=0
 
-    set lines=512
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme molokai
-    "let g:airline_theme=''
+    colorscheme PaperColor
+    let g:airline_theme='zenburn'
 else
     set t_Co=256
     set background=dark
