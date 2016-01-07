@@ -122,14 +122,12 @@ else
 endif
 
 if has("unix")
-    function! SystemIncludeDirs(cc, flags)
-        let output = system(a:cc . ' ' . a:flags . ' -v -E - < /dev/null > /dev/null')
-        let start = matchend(output, '> search starts here:\n\s\+')
-        let end = match(output, '\nEnd of search list.', start)
-        let dirs = substitute(strpart(output, start, end - start), '\s*(framework directory)', '', 'g')
-        return substitute(dirs, '\n\s*', ',', 'g')
+    function! SystemIncludeDirs(cc)
+        let output = matchstr(system(a:cc . ' -v -E - < /dev/null > /dev/null'), '\v\> search starts here:\n\s*\zs(\n|.)*\ze\nEnd of search list')
+        let dirs = substitute(output, '\V(framework directory)', '', 'g')
+        return substitute(dirs, '\v\_s+', ',', 'g')
     endfunction()
-    autocmd VimEnter * let &path = '.,include,/usr/local/include,' . SystemIncludeDirs('c++', '-x c++ -std=c++11') . ',,'
+    autocmd VimEnter * let &path .= '/usr/local/include,' . SystemIncludeDirs('c++ -x c++ -std=c++11')
 
     function! CMake(build_dir, ...)
         if filereadable("CMakeLists.txt")
