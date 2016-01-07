@@ -1,7 +1,6 @@
 set nocompatible
 
 filetype plugin indent on
-runtime! ftplugin/man.vim
 
 call plug#begin('~/.vim/plugged')
 Plug 'NLKNguyen/papercolor-theme'
@@ -87,6 +86,7 @@ nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nmap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
+noremap \ ,
 
 autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
 autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=clang-format
@@ -148,3 +148,6 @@ endif
 
 set exrc
 set secure
+
+runtime ftplugin/man.vim
+runtime macros/matchit.vim
