@@ -123,9 +123,9 @@ endif
 
 if has("unix")
     function! SystemIncludeDirs(cc)
-        let output = matchstr(system(a:cc . ' -v -E - < /dev/null > /dev/null'), '\v\> search starts here:\n\s*\zs(\n|.)*\ze\nEnd of search list')
-        let dirs = substitute(output, '\V(framework directory)', '', 'g')
-        return substitute(dirs, '\v\_s+', ',', 'g')
+        let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
+        let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
+        return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
     endfunction()
     autocmd VimEnter * let &path .= '/usr/local/include,' . SystemIncludeDirs('c++ -x c++ -std=c++11')
 
