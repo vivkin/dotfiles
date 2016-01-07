@@ -18,15 +18,7 @@ export ANDROID_HOME=/usr/local/opt/android-sdk
 export NDK_ROOT=/usr/local/opt/android-ndk
 export MONO_GAC_PREFIX="/usr/local"
 export GOPATH=$HOME/go
-
-# editor
-if which mvim &> /dev/null; then
-  export EDITOR=mvim
-  alias e="open -a MacVim"
-else
-  export EDITOR=vim
-  alias e="$EDITOR"
-fi
+export EDITOR=vim
 
 # colored ls and aliases
 if [ $(uname) == Darwin ]; then
