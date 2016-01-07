@@ -51,6 +51,7 @@ set ignorecase
 set smartcase
 
 set wildmenu
+set wildmode=longest,full
 set visualbell t_vb=
 
 set autoread
@@ -111,7 +112,7 @@ if has("gui_running")
 
     set columns=160
     set clipboard=unnamed
-    set background=light
+    set background=dark
     colorscheme PaperColor
     let g:airline_theme='zenburn'
 else
