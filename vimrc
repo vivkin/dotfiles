@@ -32,7 +32,7 @@ set cinoptions=:0,l1,g0,N-s,(0
 set ttyfast
 set cursorline
 set number
-set showcmd
+set noshowcmd
 set laststatus=2
 set encoding=utf-8
 set listchars=tab:↹␠,trail:·,eol:␤
