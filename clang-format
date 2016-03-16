@@ -4,3 +4,4 @@ BasedOnStyle:    LLVM
 AccessModifierOffset: -4
 ColumnLimit:     0
 IndentWidth:     4
+SortIncludes:    false

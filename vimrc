@@ -5,8 +5,8 @@ filetype plugin indent on
 call plug#begin('~/.vim/plugged')
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'altercation/vim-colors-solarized'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'mhartington/oceanic-next'
 Plug 'nanotech/jellybeans.vim'
@@ -118,9 +118,9 @@ if has("gui_running")
 
     set columns=160
     set clipboard=unnamed
-    set background=dark
-    colorscheme OceanicNext
-    let g:airline_theme='oceanicnext'
+    set background=light
+    colorscheme solarized
+    "let g:airline_theme='flatlandia'
 else
     set t_Co=256
     set background=dark
