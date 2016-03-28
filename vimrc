@@ -3,19 +3,16 @@ set nocompatible
 filetype plugin indent on
 
 call plug#begin('~/.vim/plugged')
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'altercation/vim-colors-solarized'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'felixhummel/setcolors.vim'
+Plug 'flazz/vim-colorschemes'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'mbbill/undotree'
-Plug 'mhartington/oceanic-next'
-Plug 'nanotech/jellybeans.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
 Plug 'rust-lang/rust.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
-Plug 'tomasr/molokai'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
@@ -23,7 +20,6 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/a.vim'
 Plug 'vivkin/cpp-vim'
 Plug 'vivkin/flatland.vim'
-Plug 'w0ng/vim-hybrid'
 call plug#end()
 
 set tabstop=4
@@ -65,7 +61,7 @@ set undodir=~/.vimundo
 set history=150
 
 let g:airline_extensions = ['whitespace', 'tabline', 'branch']
-let g:airline_powerline_fonts=1
+let g:airline_powerline_fonts=has("osx")
 let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
 let g:ag_prg='ag --vimgrep --ignore tags'
@@ -92,14 +88,10 @@ nnoremap <CR> :nohlsearch<CR><CR>
 noremap \ ,
 
 autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
-autocmd BufNewFile,BufReadPost *.h,*.hpp,*.c,*.cc,*.cxx,*.cpp setl formatprg=clang-format
-autocmd BufNewFile,BufReadPost *.coffee setl tabstop=2 shiftwidth=2
-"autocmd BufNewFile,BufReadPost *.md,*.txt setl wrap linebreak
-autocmd FileType markdown setl wrap linebreak
-"autocmd BufNewFile,BufReadPost CMakeLists.txt set nowrap
+autocmd FileType c,cpp setl formatprg=clang-format
 autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-"autocmd BufNewFile,BufReadPost ?akefile* setl noexpandtab
 autocmd FileType make setl noexpandtab
+autocmd FileType markdown setl wrap linebreak
 
 syntax on
 if has("gui_running")
@@ -119,7 +111,7 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme solarized
+    colorscheme Tomorrow
     "let g:airline_theme='flatlandia'
 else
     set t_Co=256
