@@ -36,9 +36,9 @@ shopt -s histappend
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=10000
 
-# add tab completion for many Bash commands
-if which brew &> /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
+# completion
+if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
+  . $(brew --prefix)/share/bash-completion/bash_completion
 elif [ -f /usr/share/bash-completion/bash_completion ]; then
   . /usr/share/bash-completion/bash_completion
 elif [ -f /etc/bash_completion ]; then
