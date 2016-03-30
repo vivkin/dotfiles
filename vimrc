@@ -3,6 +3,7 @@ set nocompatible
 filetype plugin indent on
 
 call plug#begin('~/.vim/plugged')
+Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'felixhummel/setcolors.vim'
 Plug 'flazz/vim-colorschemes'
