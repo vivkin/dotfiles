@@ -13,11 +13,8 @@ else
 fi
 
 export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[00m\]\$ "
-export GCC_COLORS=1
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export NDK_ROOT=/usr/local/opt/android-ndk
-export MONO_GAC_PREFIX="/usr/local"
-export GOPATH=$HOME/go
 export EDITOR=vim
 
 # colored ls and aliases
@@ -31,11 +28,13 @@ alias la='ls -A'
 alias ll='ls -lA'
 alias grep='grep --color=auto'
 
+# options
+shopt -s no_empty_cmd_completion
+
 # history
 shopt -s histappend
-HISTCONTROL=ignoreboth
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTCONTROL=ignoreboth:erasedups
+HISTSIZE=10000
 
 # add tab completion for many Bash commands
 if which brew &> /dev/null && [ -f $(brew --prefix)/etc/bash_completion ]; then
