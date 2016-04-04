@@ -49,3 +49,11 @@ fi
 if [ -e "~/.ssh/config" ]; then
   complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2 | tr ' ' '\n')" scp sftp ssh;
 fi
+
+# set terminal window title when runing msys
+if [ -v "MSYSTEM" ]; then
+  settitle() {
+    echo -ne "\e]2;$@\a\e]1;$@\a";
+  }
+  PROMPT_COMMAND='settitle $MSYSTEM $USER@$HOSTNAME:$PWD'
+fi
