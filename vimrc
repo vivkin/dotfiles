@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'felixhummel/setcolors.vim'
+Plug 'vivkin/flatland.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'mbbill/undotree'
@@ -20,7 +21,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/a.vim'
 Plug 'vivkin/cpp-vim'
-Plug 'vivkin/flatland.vim'
 call plug#end()
 
 set tabstop=4
@@ -112,8 +112,7 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme Tomorrow
-    "let g:airline_theme='flatlandia'
+    colorscheme Tomorrow-Night-Blue
 else
     set t_Co=256
     set background=dark
