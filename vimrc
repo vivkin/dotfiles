@@ -17,6 +17,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
+Plug 'junegunn/gv.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/a.vim'
@@ -112,7 +113,7 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme Tomorrow-Night-Blue
+    colorscheme Tomorrow-Night-Eighties
 else
     set t_Co=256
     set background=dark
