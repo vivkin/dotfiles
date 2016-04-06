@@ -36,7 +36,7 @@ set noshowcmd
 set laststatus=2
 set encoding=utf-8
 set listchars=tab:↹␠,trail:·,eol:␤
-set matchpairs=(:),{:},[:],<:>
+set matchpairs+=<:>
 
 set nowrap
 set nostartofline
@@ -89,6 +89,7 @@ nnoremap <CR> :nohlsearch<CR><CR>
 noremap \ ,
 
 autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
+autocmd FileType * setl formatoptions-=r
 autocmd FileType c,cpp setl formatprg=clang-format
 autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
 autocmd FileType make setl noexpandtab
@@ -120,10 +121,9 @@ else
 endif
 
 function! Themes()
-    vertical topleft new Themes
-    vertical resize 32
+    32vnew Themes
     call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
-    setlocal buftype=nofile bufhidden=delete nobuflisted noswapfile nomodifiable nowrap 
+    setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nowrap
     nnoremap <silent> <buffer> q :close<CR>
     nnoremap <silent> <buffer> o :colorscheme <C-R><C-A><CR>
 endfunction
