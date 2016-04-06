@@ -5,7 +5,6 @@ filetype plugin indent on
 call plug#begin('~/.vim/plugged')
 Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'felixhummel/setcolors.vim'
 Plug 'vivkin/flatland.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'jeetsukumaran/vim-buffergator'
@@ -67,7 +66,7 @@ let g:airline_powerline_fonts=has("osx")
 let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
 let g:ag_prg='ag --vimgrep --ignore tags'
-let NERDTreeMinimalUI=1
+let g:NERDTreeMinimalUI=1
 let mapleader=','
 
 nmap K i<CR><ESC>
@@ -113,19 +112,29 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme Tomorrow-Night-Eighties
+    colorscheme Tomorrow
 else
     set t_Co=256
     set background=dark
     colorscheme jellybeans
 endif
 
+function! Themes()
+    vertical topleft new Themes
+    vertical resize 32
+    call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
+    setlocal buftype=nofile bufhidden=delete nobuflisted noswapfile nomodifiable nowrap 
+    nnoremap <silent> <buffer> q :close<CR>
+    nnoremap <silent> <buffer> o :colorscheme <C-R><C-A><CR>
+endfunction
+command! Themes call Themes()
+
 if has("unix")
     function! SystemIncludeDirs(cc)
         let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
         let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
         return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
-    endfunction()
+    endfunction
     autocmd VimEnter * let &path .= '/usr/local/include,' . SystemIncludeDirs('c++ -x c++ -std=c++11')
 
     function! CMake(build_dir, ...)
@@ -139,8 +148,8 @@ if has("unix")
             echoerr 'CMakeLists.txt not found'
         endif
     endfunction
-    command CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-    command CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+    command! CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+    command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 endif
 
 set exrc
