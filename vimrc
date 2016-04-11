@@ -2,6 +2,12 @@ set nocompatible
 
 filetype plugin indent on
 
+" disable macvim useless stuff
+if has("gui_macvim")
+    let macvim_skip_colorscheme = 1
+    let macvim_skip_cmd_opt_movement = 1
+endif
+
 call plug#begin('~/.vim/plugged')
 Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -12,16 +18,23 @@ Plug 'mbbill/undotree'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
 Plug 'rust-lang/rust.vim'
-Plug 'scrooloose/nerdtree'
+"Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
 Plug 'junegunn/gv.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-Colorthemes'
 Plug 'vim-scripts/a.vim'
 Plug 'vivkin/cpp-vim'
+"Plug 'itchyny/lightline.vim'
+"Plug 'tpope/vim-vinegar'
+Plug 'jeetsukumaran/vim-filebeagle'
 call plug#end()
+
+" map russian for normal mode
+set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
+set langnoremap
 
 set tabstop=4
 set shiftwidth=4
@@ -30,6 +43,7 @@ set smartindent
 set cinoptions=:0,l1,g0,N-s,(0
 
 set ttyfast
+set lazyredraw
 set cursorline
 set number
 set noshowcmd
@@ -62,7 +76,7 @@ set undodir=~/.vimundo
 set history=150
 
 let g:airline_extensions = ['whitespace', 'tabline', 'branch']
-let g:airline_powerline_fonts=has("osx")
+let g:airline_powerline_fonts=0
 let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
 let g:ag_prg='ag --vimgrep --ignore tags'
@@ -88,14 +102,18 @@ nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 noremap \ ,
 
-autocmd BufReadPost quickfix nnoremap <buffer> <silent> q :cclose<CR>
-autocmd FileType * setl formatoptions-=r
-autocmd FileType c,cpp setl formatprg=clang-format
-autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-autocmd FileType make setl noexpandtab
-autocmd FileType markdown setl wrap linebreak
+augroup Filetypes
+    autocmd!
+    autocmd FileType * setl formatoptions-=r
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType c,cpp setl formatprg=clang-format
+    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType make setl noexpandtab
+    autocmd FileType markdown setl wrap linebreak
+augroup END
 
 syntax on
+set synmaxcol=1024
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
 
@@ -104,7 +122,7 @@ if has("gui_running")
     elseif has("gui_gtk")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set macmeta
+        set linespace=1
         set guifont=Office\ Code\ Pro:h13,Menlo:h13
     endif
     set guioptions=c
@@ -113,21 +131,31 @@ if has("gui_running")
     set columns=160
     set clipboard=unnamed
     set background=light
-    colorscheme Tomorrow
+    colorscheme solarized
 else
     set t_Co=256
     set background=dark
     colorscheme jellybeans
 endif
 
-function! Themes()
-    32vnew Themes
-    call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
-    setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nowrap
-    nnoremap <silent> <buffer> q :close<CR>
-    nnoremap <silent> <buffer> o :colorscheme <C-R><C-A><CR>
+set laststatus=2
+set statusline=\ %f%h%r%m\ %<%(<<\ %{fugitive#head()}%)\ %=
+set statusline+=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+
+function! ColorsList()
+    let wn = bufwinnr('\[Colors List]')
+    if wn == -1
+        32vnew "[Colors List]"
+        call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
+        setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
+        nnoremap <silent> <buffer> q :close<CR>
+        nnoremap <silent> <buffer> o :colorscheme <C-R><C-A><CR>
+    else
+        execute wn . 'wincmd w'
+    endif
+    execute '/' . g:colors_name
 endfunction
-command! Themes call Themes()
+command! Colors call ColorsList()
 
 if has("unix")
     function! SystemIncludeDirs(cc)
