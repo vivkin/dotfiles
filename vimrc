@@ -139,21 +139,23 @@ else
 endif
 
 set laststatus=2
-set statusline=\ %f%h%r%m\ %<%(<<\ %{fugitive#head()}%)\ %=
-set statusline+=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 
 function! ColorsList()
-    let wn = bufwinnr('\[Colors List]')
+    let name = fnameescape('[Color List]')
+    let wn = bufwinnr(name)
     if wn == -1
-        32vnew "[Colors List]"
+        silent! execute '32 vnew' name
         call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
         setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
         nnoremap <silent> <buffer> q :close<CR>
-        nnoremap <silent> <buffer> o :colorscheme <C-R><C-A><CR>
+        nnoremap <silent> <buffer> o :execute 'colorscheme ' . getline('.')<CR>
     else
-        execute wn . 'wincmd w'
+        silent! execute wn . 'wincmd w'
     endif
-    execute '/' . g:colors_name
+    if exists('g:colors_name')
+        silent! execute '/' . g:colors_name
+    endif
 endfunction
 command! Colors call ColorsList()
 
