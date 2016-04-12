@@ -1,40 +1,58 @@
 set nocompatible
 
-filetype plugin indent on
-
 " disable macvim useless stuff
 if has("gui_macvim")
     let macvim_skip_colorscheme = 1
     let macvim_skip_cmd_opt_movement = 1
 endif
 
+let mapleader=','
+
+let g:buffergator_autoexpand_on_split=0
+let g:buffergator_suppress_keymaps=1
+let g:ag_prg='ag --vimgrep --ignore tags'
+
 call plug#begin('~/.vim/plugged')
+Plug 'vivkin/flatland.vim'
 Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'vivkin/flatland.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'jeetsukumaran/vim-buffergator'
+Plug 'jeetsukumaran/vim-filebeagle'
+Plug 'junegunn/gv.vim'
 Plug 'mbbill/undotree'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
 Plug 'rust-lang/rust.vim'
-"Plug 'scrooloose/nerdtree'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
-Plug 'junegunn/gv.vim'
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-Colorthemes'
 Plug 'vim-scripts/a.vim'
 Plug 'vivkin/cpp-vim'
-"Plug 'itchyny/lightline.vim'
-"Plug 'tpope/vim-vinegar'
-Plug 'jeetsukumaran/vim-filebeagle'
 call plug#end()
+
+runtime ftplugin/man.vim
+runtime macros/matchit.vim
+
+filetype plugin indent on
+
+augroup filetypes
+    autocmd!
+    autocmd FileType * setl formatoptions-=r
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType c,cpp setl formatprg=clang-format
+    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType make setl noexpandtab
+    autocmd FileType markdown setl wrap linebreak
+augroup END
 
 " map russian for normal mode
 set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
 set langnoremap
+
+" status line
+set laststatus=2
+set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 
 set tabstop=4
 set shiftwidth=4
@@ -47,7 +65,6 @@ set lazyredraw
 set cursorline
 set number
 set noshowcmd
-set laststatus=2
 set encoding=utf-8
 set listchars=tab:↹␠,trail:·,eol:␤
 set matchpairs+=<:>
@@ -73,15 +90,7 @@ set noswapfile
 set nowritebackup
 set undofile
 set undodir=~/.vimundo
-set history=150
-
-let g:airline_extensions = ['whitespace', 'tabline', 'branch']
-let g:airline_powerline_fonts=0
-let g:buffergator_autoexpand_on_split=0
-let g:buffergator_suppress_keymaps=1
-let g:ag_prg='ag --vimgrep --ignore tags'
-let g:NERDTreeMinimalUI=1
-let mapleader=','
+set history=10000
 
 nmap K i<CR><ESC>
 nmap cn :cnext<CR>
@@ -92,28 +101,16 @@ nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
 nmap <silent> <Leader>b :BuffergatorToggle<CR>
 nmap <silent> <Leader>B :BuffergatorTabsToggle<CR>
-nmap <silent> <Leader>n :NERDTreeToggle<CR>
-nmap <silent> <Leader>N :NERDTree %<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nmap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
 nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nmap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
-noremap \ ,
-
-augroup Filetypes
-    autocmd!
-    autocmd FileType * setl formatoptions-=r
-    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
-    autocmd FileType c,cpp setl formatprg=clang-format
-    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-    autocmd FileType make setl noexpandtab
-    autocmd FileType markdown setl wrap linebreak
-augroup END
 
 syntax on
 set synmaxcol=1024
+
 if has("gui_running")
     autocmd GUIEnter * set t_vb=
 
@@ -138,9 +135,6 @@ else
     colorscheme jellybeans
 endif
 
-set laststatus=2
-set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
-
 function! ColorsList()
     let name = fnameescape('[Color List]')
     let wn = bufwinnr(name)
@@ -159,31 +153,28 @@ function! ColorsList()
 endfunction
 command! Colors call ColorsList()
 
-if has("unix")
-    function! SystemIncludeDirs(cc)
-        let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
-        let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
-        return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
-    endfunction
-    autocmd VimEnter * let &path .= '/usr/local/include,' . SystemIncludeDirs('c++ -x c++ -std=c++11')
+set path+=/usr/local/include
 
-    function! CMake(build_dir, ...)
-        if filereadable("CMakeLists.txt")
-            let build_dir = fnameescape(a:build_dir)
-            execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
-            if v:shell_error == 0
-                let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
-            endif
-        else
-            echoerr 'CMakeLists.txt not found'
+function! CompilerIncludePath(cc)
+    let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
+    let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
+    return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
+endfunction
+command! -nargs=+ IncludePath let &path.=',' . CompilerIncludePath('<args>')
+
+function! CMake(build_dir, ...)
+    if filereadable("CMakeLists.txt")
+        let build_dir = fnameescape(a:build_dir)
+        execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
+        if v:shell_error == 0
+            let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
         endif
-    endfunction
-    command! CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-    command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-endif
+    else
+        echoerr 'CMakeLists.txt not found'
+    endif
+endfunction
+command! CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 
 set exrc
 set secure
-
-runtime ftplugin/man.vim
-runtime macros/matchit.vim
