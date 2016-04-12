@@ -34,6 +34,47 @@ call plug#end()
 runtime ftplugin/man.vim
 runtime macros/matchit.vim
 
+function! ColorsList()
+    let name = fnameescape('[Color List]')
+    let wn = bufwinnr(name)
+    if wn == -1
+        silent! execute '32 vnew' name
+        call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
+        setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
+        nnoremap <silent> <buffer> q :close<CR>
+        nnoremap <silent> <buffer> o :execute 'colorscheme ' . getline('.')<CR>
+    else
+        silent! execute wn . 'wincmd w'
+    endif
+    if exists('g:colors_name')
+        silent! execute '/' . g:colors_name
+    endif
+endfunction
+command! Colors call ColorsList()
+
+function! CompilerIncludePath(cc)
+    let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
+    let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
+    return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
+endfunction
+command! -nargs=+ IncludePath let &path.=CompilerIncludePath('<args>')
+command! PathGNU IncludePath gcc-5 -x c++ -std=c++14
+command! PathClang IncludePath clang -x c++ -std=c++14
+
+function! CMake(build_dir, ...)
+    if filereadable("CMakeLists.txt")
+        let build_dir = fnameescape(a:build_dir)
+        execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
+        if v:shell_error == 0
+            let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
+        endif
+    else
+        echoerr 'CMakeLists.txt not found'
+    endif
+endfunction
+command! CMakeGNU call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
+
 filetype plugin indent on
 
 augroup filetypes
@@ -134,47 +175,6 @@ else
     set background=dark
     colorscheme jellybeans
 endif
-
-function! ColorsList()
-    let name = fnameescape('[Color List]')
-    let wn = bufwinnr(name)
-    if wn == -1
-        silent! execute '32 vnew' name
-        call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
-        setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
-        nnoremap <silent> <buffer> q :close<CR>
-        nnoremap <silent> <buffer> o :execute 'colorscheme ' . getline('.')<CR>
-    else
-        silent! execute wn . 'wincmd w'
-    endif
-    if exists('g:colors_name')
-        silent! execute '/' . g:colors_name
-    endif
-endfunction
-command! Colors call ColorsList()
-
-set path+=/usr/local/include
-
-function! CompilerIncludePath(cc)
-    let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
-    let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
-    return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
-endfunction
-command! -nargs=+ IncludePath let &path.=',' . CompilerIncludePath('<args>')
-
-function! CMake(build_dir, ...)
-    if filereadable("CMakeLists.txt")
-        let build_dir = fnameescape(a:build_dir)
-        execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
-        if v:shell_error == 0
-            let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
-        endif
-    else
-        echoerr 'CMakeLists.txt not found'
-    endif
-endfunction
-command! CMakeGnu call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 
 set exrc
 set secure
