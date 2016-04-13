@@ -1,16 +1,22 @@
 set nocompatible
 
+let mapleader=','
+
 " disable macvim useless stuff
 if has("gui_macvim")
     let macvim_skip_colorscheme = 1
     let macvim_skip_cmd_opt_movement = 1
 endif
 
-let mapleader=','
+" install vim-plug
+if !isdirectory(expand('~/.vim/plugged'))
+    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall
+endif
 
+" plugins
 let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
-let g:ag_prg='ag --vimgrep --ignore tags'
 
 call plug#begin('~/.vim/plugged')
 Plug 'vivkin/flatland.vim'
@@ -129,8 +135,14 @@ set autoread
 set autowrite
 set noswapfile
 set nowritebackup
+
 set undofile
-set undodir=~/.vimundo
+set undodir=~/.vim/undo
+
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), 'p')
+endif
+
 set history=10000
 
 nmap K i<CR><ESC>
