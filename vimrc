@@ -180,8 +180,8 @@ if has("gui_running")
 
     set columns=160
     set clipboard=unnamed
-    set background=light
-    colorscheme solarized
+    set background=dark
+    colorscheme hybrid_material
 else
     set t_Co=256
     set background=dark

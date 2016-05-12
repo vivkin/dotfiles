@@ -45,15 +45,10 @@ elif [ -f /etc/bash_completion ]; then
   . /etc/bash_completion
 fi
 
-# add tab completion for SSH hostnames based on ~/.ssh/config, ignoring wildcards
-if [ -e "~/.ssh/config" ]; then
-  complete -o "default" -o "nospace" -W "$(grep "^Host" ~/.ssh/config | grep -v "[?*]" | cut -d " " -f2 | tr ' ' '\n')" scp sftp ssh;
-fi
-
-# set terminal window title when runing msys
+# set terminal window title
 if [ -v "MSYSTEM" ]; then
-  settitle() {
-    echo -ne "\e]2;$@\a\e]1;$@\a";
+  update_window_title() {
+    echo -ne "\e]2;$MSYSTEM $USER@$HOSTNAME:$PWD\a"
   }
-  PROMPT_COMMAND='settitle $MSYSTEM $USER@$HOSTNAME:$PWD'
+  PROMPT_COMMAND=update_window_title
 fi
