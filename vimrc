@@ -33,7 +33,6 @@ Plug 'rust-lang/rust.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
-Plug 'vim-scripts/a.vim'
 Plug 'vivkin/cpp-vim'
 call plug#end()
 
@@ -48,7 +47,6 @@ function! ColorsList()
         call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
         setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
         nnoremap <silent> <buffer> q :close<CR>
-        "nnoremap <silent> <buffer> o :execute 'colorscheme ' . getline('.')<CR>
         autocmd CursorMoved <buffer> execute 'colorscheme ' . getline('.') | set linespace=1
     else
         silent! execute wn . 'wincmd w'
@@ -82,6 +80,19 @@ endfunction
 command! CMakeGNU call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 
+function! AlternateFile()
+    if match(expand('%:e'), '\v\cc+[px]*') != -1
+        setl suffixesadd=.h,.hpp,.hxx
+        execute 'find %:t:r'
+    elseif match(expand('%:e'), '\v\ch+[px]*') != -1
+        setl suffixesadd=.c,.cc,.cpp,.cxx,.m,.mm
+        execute 'find %:t:r'
+    else
+        echo "No existing alternate available"
+    endif
+endfunction
+command! A call AlternateFile()
+
 filetype plugin indent on
 
 augroup filetypes
@@ -92,6 +103,7 @@ augroup filetypes
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType * setl formatoptions-=o
+    autocmd BufReadPost */include/c++/* setf cpp
 augroup END
 
 " map russian for normal mode
