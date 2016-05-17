@@ -48,7 +48,8 @@ function! ColorsList()
         call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
         setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
         nnoremap <silent> <buffer> q :close<CR>
-        nnoremap <silent> <buffer> o :execute 'colorscheme ' . getline('.')<CR>
+        "nnoremap <silent> <buffer> o :execute 'colorscheme ' . getline('.')<CR>
+        autocmd CursorMoved <buffer> execute 'colorscheme ' . getline('.') | set linespace=1
     else
         silent! execute wn . 'wincmd w'
     endif
@@ -85,12 +86,12 @@ filetype plugin indent on
 
 augroup filetypes
     autocmd!
-    autocmd FileType * setl formatoptions-=r
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
     autocmd FileType c,cpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
+    autocmd FileType * setl formatoptions-=o
 augroup END
 
 " map russian for normal mode
@@ -178,10 +179,11 @@ if has("gui_running")
     set guioptions=c
     set guiheadroom=0
 
-    set columns=160
-    set clipboard=unnamed
     set background=dark
-    colorscheme hybrid_material
+    set clipboard=unnamed
+    set columns=160
+    set lines=999
+    colorscheme abra
 else
     set t_Co=256
     set background=dark
