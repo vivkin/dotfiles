@@ -88,10 +88,12 @@ function! AlternateFile()
         setl suffixesadd=.c,.cc,.cpp,.cxx,.m,.mm
         execute 'find %:t:r'
     else
-        echo "No existing alternate available"
+        echohl WarningMsg | echo "No existing alternate available" | echohl None
     endif
 endfunction
 command! A call AlternateFile()
+
+command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 
 filetype plugin indent on
 
