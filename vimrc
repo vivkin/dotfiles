@@ -116,6 +116,9 @@ augroup filetypes
     autocmd BufReadPost */include/c++/* setf cpp
 augroup END
 
+" disable annoying bells and flashes
+set belloff=all
+
 " map russian for normal mode
 set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
 set langnoremap
@@ -152,7 +155,6 @@ set smartcase
 
 set wildmenu
 set wildmode=longest,full
-set visualbell t_vb=
 
 set autoread
 set autowrite
@@ -188,8 +190,6 @@ syntax on
 set synmaxcol=1024
 
 if has("gui_running")
-    autocmd GUIEnter * set t_vb=
-
     if has("gui_win32")
         set guifont=Consolas:h12:cRUSSIAN
     elseif has("gui_gtk")
