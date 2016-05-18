@@ -2,12 +2,6 @@ set nocompatible
 
 let mapleader=','
 
-" disable macvim useless stuff
-if has("gui_macvim")
-    let macvim_skip_colorscheme = 1
-    let macvim_skip_cmd_opt_movement = 1
-endif
-
 " install vim-plug
 if !isdirectory(expand('~/.vim/plugged'))
     execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -104,7 +98,6 @@ command! A call AlternateFile()
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 
 filetype plugin indent on
-
 augroup filetypes
     autocmd!
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
@@ -127,6 +120,10 @@ set langnoremap
 set laststatus=2
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 
+set clipboard=unnamed
+set history=10000
+set t_Co=256
+
 set tabstop=4
 set shiftwidth=4
 set expandtab
@@ -137,7 +134,7 @@ set ttyfast
 set lazyredraw
 set cursorline
 set number
-set noshowcmd
+set showcmd
 set encoding=utf-8
 set listchars=tab:↹␠,trail:·,eol:␤
 set matchpairs+=<:>
@@ -168,7 +165,30 @@ if !isdirectory(expand(&undodir))
     call mkdir(expand(&undodir), 'p')
 endif
 
-set history=10000
+if has("gui_running")
+    set columns=160
+    set lines=999
+
+    set guiheadroom=0
+    set guioptions=c
+
+    if has("gui_win32")
+        set guifont=Consolas:h12:cRUSSIAN
+    elseif has("gui_gtk")
+        set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
+    elseif has("gui_macvim")
+        set guifont=Office\ Code\ Pro:h13,Menlo:h13
+        set linespace=1
+        let macvim_skip_colorscheme = 1
+        let macvim_skip_cmd_opt_movement = 1
+    endif
+endif
+
+syntax on
+set synmaxcol=1024
+set background=dark
+autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
+colorscheme gruvbox
 
 nmap K i<CR><ESC>
 nmap cn :cnext<CR>
@@ -185,32 +205,3 @@ nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nmap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
-
-syntax on
-set synmaxcol=1024
-
-if has("gui_running")
-    if has("gui_win32")
-        set guifont=Consolas:h12:cRUSSIAN
-    elseif has("gui_gtk")
-        set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
-    elseif has("gui_macvim")
-        set guifont=Office\ Code\ Pro:h13,Menlo:h13
-    endif
-
-    set guioptions=c
-    set guiheadroom=0
-
-    set background=dark
-    set clipboard=unnamed
-    set columns=160
-    set lines=999
-    colorscheme gruvbox
-else
-    set t_Co=256
-    set background=dark
-    colorscheme jellybeans
-endif
-
-set exrc
-set secure
