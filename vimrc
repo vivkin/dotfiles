@@ -19,10 +19,19 @@ let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
 
 call plug#begin('~/.vim/plugged')
+" colorschemes
+Plug 'chriskempson/base16-vim'
+Plug 'jonathanfilip/vim-lucius'
+Plug 'kabbamine/yowish.vim'
+Plug 'mhinz/vim-janah'
+Plug 'morhetz/gruvbox'
+Plug 'nanotech/jellybeans.vim'
+Plug 'tomasr/molokai'
 Plug 'vivkin/flatland.vim'
+"Plug 'flazz/vim-colorschemes'
+
 Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'flazz/vim-colorschemes'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'junegunn/gv.vim'
@@ -40,16 +49,15 @@ runtime ftplugin/man.vim
 runtime macros/matchit.vim
 
 function! ColorsList()
-    let name = fnameescape('[Color List]')
-    let wn = bufwinnr(name)
-    if wn == -1
-        silent! execute '32 vnew' name
+    let colorslist_name = '\[Color\ List]'
+    if bufwinnr(colorslist_name) != -1
+        silent execute bufwinnr(colorslist_name) . 'wincmd w'
+    else
+        silent execute '32 vnew' colorslist_name
         call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
         setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
         nnoremap <silent> <buffer> q :close<CR>
-        autocmd CursorMoved <buffer> execute 'colorscheme ' . getline('.') | set linespace=1
-    else
-        silent! execute wn . 'wincmd w'
+        autocmd CursorMoved <buffer> try | execute 'colorscheme ' . getline('.') | set linespace=1 | finally | endtry
     endif
     if exists('g:colors_name')
         silent! execute '/' . g:colors_name
@@ -187,9 +195,9 @@ if has("gui_running")
     elseif has("gui_gtk")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set linespace=1
         set guifont=Office\ Code\ Pro:h13,Menlo:h13
     endif
+
     set guioptions=c
     set guiheadroom=0
 
@@ -197,7 +205,7 @@ if has("gui_running")
     set clipboard=unnamed
     set columns=160
     set lines=999
-    colorscheme abra
+    colorscheme gruvbox
 else
     set t_Co=256
     set background=dark
