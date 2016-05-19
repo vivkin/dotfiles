@@ -8,7 +8,19 @@ if !isdirectory(expand('~/.vim/plugged'))
     autocmd VimEnter * PlugInstall
 endif
 
-" plugins
+" don't load unused plugins
+let g:loaded_2html_plugin = 1
+let g:loaded_getscriptPlugin = 1
+let g:loaded_gzip = 1
+let g:loaded_logipat = 1
+let g:loaded_matchparen = 1
+let g:loaded_netrwPlugin = 1
+let g:loaded_rrhelper = 1
+let g:loaded_spellfile_plugin = 1
+let g:loaded_tarPlugin = 1
+let g:loaded_vimballPlugin = 1
+let g:loaded_zipPlugin = 1
+
 let g:buffergator_autoexpand_on_split=0
 let g:buffergator_suppress_keymaps=1
 
@@ -22,8 +34,7 @@ Plug 'morhetz/gruvbox'
 Plug 'nanotech/jellybeans.vim'
 Plug 'tomasr/molokai'
 Plug 'vivkin/flatland.vim'
-"Plug 'flazz/vim-colorschemes'
-
+" plugins
 Plug 'EinfachToll/DidYouMean'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jeetsukumaran/vim-buffergator'
@@ -51,7 +62,7 @@ function! ColorsList()
         call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
         setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
         nnoremap <silent> <buffer> q :close<CR>
-        autocmd CursorMoved <buffer> try | execute 'colorscheme ' . getline('.') | set linespace=1 | finally | endtry
+        autocmd CursorMoved <buffer> try | syntax sync fromstart | execute  'colorscheme ' . getline('.') | set linespace=1 | finally | endtry
     endif
     if exists('g:colors_name')
         silent! execute '/' . g:colors_name
@@ -188,6 +199,7 @@ syntax on
 set synmaxcol=1024
 set background=dark
 autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
+autocmd ColorScheme janah highlight Normal ctermbg=235
 colorscheme gruvbox
 
 nmap K i<CR><ESC>
