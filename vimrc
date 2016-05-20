@@ -2,12 +2,6 @@ set nocompatible
 
 let mapleader=','
 
-" install vim-plug
-if !isdirectory(expand('~/.vim/plugged'))
-    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    autocmd VimEnter * PlugInstall
-endif
-
 " don't load unused plugins
 let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
@@ -21,8 +15,15 @@ let g:loaded_tarPlugin = 1
 let g:loaded_vimballPlugin = 1
 let g:loaded_zipPlugin = 1
 
-let g:buffergator_autoexpand_on_split=0
-let g:buffergator_suppress_keymaps=1
+" man pages and %
+runtime ftplugin/man.vim
+runtime macros/matchit.vim
+
+" install vim-plug
+if !isdirectory(expand('~/.vim/plugged'))
+    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall
+endif
 
 call plug#begin('~/.vim/plugged')
 " colorschemes
@@ -35,23 +36,16 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'tomasr/molokai'
 Plug 'vivkin/flatland.vim'
 " plugins
+Plug 'ajh17/VimCompletesMe'
 Plug 'EinfachToll/DidYouMean'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'jeetsukumaran/vim-buffergator'
 Plug 'jeetsukumaran/vim-filebeagle'
-Plug 'junegunn/gv.vim'
-Plug 'mbbill/undotree'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
 Plug 'rust-lang/rust.vim'
 Plug 'tikhomirov/vim-glsl'
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
-
-runtime ftplugin/man.vim
-runtime macros/matchit.vim
 
 function! ColorsList()
     let colorslist_name = '\[Color\ List]'
@@ -132,6 +126,7 @@ set laststatus=2
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 
 set clipboard=unnamed
+set display=uhex
 set history=10000
 set t_Co=256
 
@@ -198,7 +193,6 @@ endif
 syntax on
 set synmaxcol=1024
 set background=dark
-autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
 autocmd ColorScheme janah highlight Normal ctermbg=235
 colorscheme gruvbox
 
