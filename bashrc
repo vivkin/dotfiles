@@ -1,23 +1,30 @@
 # vim:ts=2:sw=2:et
 
-if [ "${USER}" == "root" ]; then
+# if not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# command promt
+if [ EUID == 0 ]; then
   ucolor="\033[31m"
 else
   ucolor="\033[32m"
 fi
 
-if [ "${SSH_TTY}" ]; then
+if [ -v SSH_TTY ]; then
   hcolor="\033[31m"
 else
   hcolor="\033[32m"
 fi
 
-export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[00m\]\$ "
-export ANDROID_HOME=/usr/local/opt/android-sdk
-export NDK_ROOT=/usr/local/opt/android-ndk
-export EDITOR=vim
+ps1_git_branch() {
+  git branch --no-color 2> /dev/null | sed -n -e '/^*/s/* \(.*\)/(\1)/p'
+}
+export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[01;31m\]\$(ps1_git_branch)\[\033[00m\]\$ "
 
-# colored ls and aliases
+# colored ls and grep
 if [ $(uname) == Darwin ]; then
   alias ls='ls -GF'
 else
@@ -36,7 +43,7 @@ shopt -s histappend
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=10000
 
-# completion
+# enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
   . $(brew --prefix)/share/bash-completion/bash_completion
 elif [ -f /usr/share/bash-completion/bash_completion ]; then
