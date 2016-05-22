@@ -7,7 +7,7 @@ case $- in
 esac
 
 # command promt
-if [ EUID == 0 ]; then
+if [ $EUID == 0 ]; then
   ucolor="\033[31m"
 else
   ucolor="\033[32m"
@@ -20,7 +20,14 @@ else
 fi
 
 ps1_git_branch() {
-  git branch --no-color 2> /dev/null | sed -n -e '/^*/s/* \(.*\)/(\1)/p'
+  local BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
+  if [ -n "$BRANCH" ]; then
+    local DIRTY
+    local STAGED
+    git diff --no-ext-diff --quiet || DIRTY='*'
+    git diff --no-ext-diff --cached --quiet || STAGED='+'
+    echo "[${BRANCH}${DIRTY}${STAGED}]"
+  fi
 }
 export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[01;31m\]\$(ps1_git_branch)\[\033[00m\]\$ "
 
