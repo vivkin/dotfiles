@@ -60,14 +60,8 @@ elif [ -f /etc/bash_completion ]; then
 fi
 
 # set terminal window title
-if [ -z "$MSYSTEM" ]; then
-  update_window_title() {
-    local TITLE=${PWD/#$HOME/\~}
-    echo -ne "\e]0;${TITLE##*/}\a"
-  }
-else
-  update_window_title() {
-    echo -ne "\e]0;$MSYSTEM $USER@$HOSTNAME:$PWD\a"
-  }
-fi
+update_window_title() {
+  local TITLE=${PWD/#$HOME/\~}
+  echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${TITLE##*/}\a"
+}
 PROMPT_COMMAND=update_window_title
