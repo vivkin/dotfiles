@@ -31,7 +31,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'kabbamine/yowish.vim'
 Plug 'mhinz/vim-janah'
-Plug 'morhetz/gruvbox'
+"Plug 'morhetz/gruvbox'
 Plug 'nanotech/jellybeans.vim'
 Plug 'tomasr/molokai'
 Plug 'vivkin/flatland.vim'
@@ -173,7 +173,7 @@ endif
 
 if has("gui_running")
     set columns=160
-    set lines=999
+    set lines=42
 
     set guiheadroom=0
     set guioptions=c
@@ -193,17 +193,16 @@ endif
 syntax on
 set synmaxcol=1024
 set background=dark
-autocmd ColorScheme janah highlight Normal ctermbg=235
-colorscheme gruvbox
+"autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
+"autocmd ColorScheme janah highlight Normal ctermbg=235
+colorscheme lucius
 
 nmap K i<CR><ESC>
-nmap cn :cnext<CR>
-nmap cp :cprev<CR>
 nmap <C-j> :bnext<CR>
 nmap <C-k> :bprevious<CR>
 nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
-nmap <silent> <Leader>b :BuffergatorToggle<CR>
+nmap <silent> <Leader>b :B<CR>
 nmap <silent> <Leader>B :BuffergatorTabsToggle<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nmap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
