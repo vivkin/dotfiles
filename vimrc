@@ -27,13 +27,14 @@ endif
 
 call plug#begin('~/.vim/plugged')
 " colorschemes
+Plug 'altercation/vim-colors-solarized'
 Plug 'chriskempson/base16-vim'
+Plug 'crusoexia/vim-monokai'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'kabbamine/yowish.vim'
 Plug 'mhinz/vim-janah'
-"Plug 'morhetz/gruvbox'
+Plug 'morhetz/gruvbox'
 Plug 'nanotech/jellybeans.vim'
-Plug 'tomasr/molokai'
 Plug 'vivkin/flatland.vim'
 " plugins
 Plug 'ajh17/VimCompletesMe'
@@ -192,7 +193,7 @@ endif
 
 syntax on
 set synmaxcol=1024
-set background=dark
+set background=light
 "autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
 "autocmd ColorScheme janah highlight Normal ctermbg=235
 colorscheme lucius
@@ -203,7 +204,7 @@ nmap <C-k> :bprevious<CR>
 nmap <Tab> <C-w>w
 nmap <S-Tab> <C-w>W
 nmap <silent> <Leader>b :B<CR>
-nmap <silent> <Leader>B :BuffergatorTabsToggle<CR>
+nmap <silent> <Leader>B :B!<CR>
 nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nmap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
 nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
