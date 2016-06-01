@@ -1,19 +1,9 @@
 #!/bin/sh
 
-for file in bash_profile bashrc clang-format editrc inputrc vimrc gitconfig; do
-  if [ -h ~/.$file ]; then
-    rm ~/.$file
-  elif [ -f ~/.$file ]; then
-    mv ~/.$file ~/.$file.old
+mkdir -p ~/dotfiles/backup
+for file in bashrc clang-format editrc inputrc vimrc gitconfig; do
+  if [ ~/.$file -ot ~/dotfiles/$file ]; then
+      cp ~/.$file ~/dotfiles/backup/$file-$(date +%Y%m%d-%H%M%S)
   fi
-  ln -s ~/dotfiles/$file ~/.$file
+  ln -si ~/dotfiles/$file ~/.$file
 done
-
-mkdir -p ~/.vimundo
-
-if [ ! -f ~/.vim/autoload/plug.vim ]; then
-  mkdir -p ~/.vim/autoload
-  curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-fi
-
-vim -c PlugUpdate -c qa
