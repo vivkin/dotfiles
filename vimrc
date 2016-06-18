@@ -7,7 +7,6 @@ let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
 let g:loaded_gzip = 1
 let g:loaded_logipat = 1
-let g:loaded_matchparen = 1
 let g:loaded_netrwPlugin = 1
 let g:loaded_rrhelper = 1
 let g:loaded_spellfile_plugin = 1
@@ -28,10 +27,11 @@ endif
 call plug#begin('~/.vim/plugged')
 " colorschemes
 Plug 'altercation/vim-colors-solarized'
-Plug 'chriskempson/base16-vim'
+Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'crusoexia/vim-monokai'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'kabbamine/yowish.vim'
+Plug 'kepbod/vim-hybrid'
 Plug 'mhinz/vim-janah'
 Plug 'morhetz/gruvbox'
 Plug 'nanotech/jellybeans.vim'
@@ -42,7 +42,6 @@ Plug 'EinfachToll/DidYouMean'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
-Plug 'rust-lang/rust.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
@@ -71,7 +70,7 @@ function! CompilerIncludePath(cc)
     return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
 endfunction
 command! -nargs=+ IncludePath let &path.=CompilerIncludePath('<args>')
-command! PathGNU IncludePath gcc-5 -x c++ -std=c++14
+command! PathGNU IncludePath gcc-6 -x c++ -std=c++14
 command! PathClang IncludePath clang -x c++ -std=c++14
 
 function! CMake(build_dir, ...)
@@ -193,10 +192,11 @@ endif
 
 syntax on
 set synmaxcol=1024
-set background=light
-"autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
-"autocmd ColorScheme janah highlight Normal ctermbg=235
-colorscheme lucius
+set background=dark
+autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
+autocmd ColorScheme janah highlight Normal ctermbg=235
+colorscheme monokai
+autocmd GUIEnter * set background=light | colorscheme Tomorrow
 
 nmap K i<CR><ESC>
 nmap <C-j> :bnext<CR>
@@ -211,3 +211,6 @@ nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nmap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nmap <silent> <Leader>c :copen<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
+cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
+cnoremap <C-n> <UP>
+cnoremap <C-p> <DOWN>
