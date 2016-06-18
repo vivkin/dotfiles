@@ -31,14 +31,14 @@ Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'crusoexia/vim-monokai'
 Plug 'jonathanfilip/vim-lucius'
 Plug 'kabbamine/yowish.vim'
-Plug 'kepbod/vim-hybrid'
+Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'mhinz/vim-janah'
 Plug 'morhetz/gruvbox'
 Plug 'nanotech/jellybeans.vim'
 Plug 'vivkin/flatland.vim'
 " plugins
-Plug 'ajh17/VimCompletesMe'
 Plug 'EinfachToll/DidYouMean'
+Plug 'ajh17/VimCompletesMe'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
@@ -128,7 +128,6 @@ set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&e
 set clipboard=unnamed
 set display=uhex
 set history=10000
-set t_Co=256
 
 set tabstop=4
 set shiftwidth=4
@@ -183,20 +182,21 @@ if has("gui_running")
     elseif has("gui_gtk")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set guifont=Office\ Code\ Pro:h13,Menlo:h13
-        set linespace=1
+        set guifont=Cousine:h14,Office\ Code\ Pro:h13,Menlo:h13
+        set linespace=2
         let macvim_skip_colorscheme = 1
         let macvim_skip_cmd_opt_movement = 1
     endif
 endif
 
 syntax on
+set t_Co=16
 set synmaxcol=1024
 set background=dark
+colorscheme default
 autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
 autocmd ColorScheme janah highlight Normal ctermbg=235
-colorscheme monokai
-autocmd GUIEnter * set background=light | colorscheme Tomorrow
+autocmd GUIEnter * set background=dark | colorscheme hybrid_material
 
 nmap K i<CR><ESC>
 nmap <C-j> :bnext<CR>
