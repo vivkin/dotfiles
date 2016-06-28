@@ -118,7 +118,8 @@ augroup END
 set belloff=all
 
 " map russian for normal mode
-language ru_RU.UTF-8
+language C
+set encoding=utf-8
 set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
 set langnoremap
 
@@ -141,7 +142,6 @@ set lazyredraw
 set cursorline
 set number
 set showcmd
-set encoding=utf-8
 set listchars=tab:↹␠,trail:·,eol:␤
 set matchpairs+=<:>
 
