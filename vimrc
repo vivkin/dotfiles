@@ -56,7 +56,7 @@ function! ColorsList()
         call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
         setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
         nnoremap <silent> <buffer> q :close<CR>
-        autocmd CursorMoved <buffer> try | syntax sync fromstart | execute  'colorscheme ' . getline('.') | set linespace=1 | finally | endtry
+        autocmd CursorMoved <buffer> try | syntax sync fromstart | execute  'colorscheme ' . getline('.') | finally | endtry
     endif
     if exists('g:colors_name')
         silent! execute '/' . g:colors_name
@@ -118,6 +118,7 @@ augroup END
 set belloff=all
 
 " map russian for normal mode
+language ru_RU.UTF-8
 set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
 set langnoremap
 
@@ -172,7 +173,7 @@ endif
 
 if has("gui_running")
     set columns=160
-    set lines=42
+    set lines=48
 
     set guiheadroom=0
     set guioptions=c
@@ -183,20 +184,17 @@ if has("gui_running")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
         set guifont=Cousine:h14,Office\ Code\ Pro:h13,Menlo:h13
-        set linespace=2
         let macvim_skip_colorscheme = 1
         let macvim_skip_cmd_opt_movement = 1
     endif
 endif
 
 syntax on
-set t_Co=16
+set t_Co=256
 set synmaxcol=1024
 set background=dark
-colorscheme default
-autocmd ColorScheme gruvbox call GruvboxHlsShowCursor()
-autocmd ColorScheme janah highlight Normal ctermbg=235
-autocmd GUIEnter * set background=dark | colorscheme hybrid_material
+colorscheme gruvbox
+autocmd GUIEnter * set background=light | colorscheme Tomorrow
 
 nmap K i<CR><ESC>
 nmap <C-j> :bnext<CR>
