@@ -196,19 +196,20 @@ set background=dark
 colorscheme gruvbox
 autocmd GUIEnter * set background=light | colorscheme Tomorrow
 
-nmap K i<CR><ESC>
-nmap <C-j> :bnext<CR>
-nmap <C-k> :bprevious<CR>
-nmap <Tab> <C-w>w
-nmap <S-Tab> <C-w>W
-nmap <silent> <Leader>b :B<CR>
-nmap <silent> <Leader>B :B!<CR>
-nmap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
-nmap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
-nmap <silent> <Leader>m :make<CR>:botright cwindow<CR>
-nmap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
-nmap <silent> <Leader>c :copen<CR>
-nnoremap <CR> :nohlsearch<CR><CR>
+cnoremap <C-n> <DOWN>
+cnoremap <C-p> <UP>
 cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
-cnoremap <C-n> <UP>
-cnoremap <C-p> <DOWN>
+
+nnoremap <CR> :nohlsearch<CR><CR>
+nnoremap <D-[> <C-w>W
+nnoremap <D-]> <C-w>w
+nnoremap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
+nnoremap <silent> <Leader>B :B!<CR>
+nnoremap <silent> <Leader>b :B<CR>
+nnoremap <silent> <Leader>c :copen<CR>
+nnoremap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
+nnoremap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
+nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
+nnoremap K i<CR><ESC>
+nnoremap Q :q!<CR>
+nnoremap ZX :bdelete<CR>
