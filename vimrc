@@ -212,4 +212,4 @@ nnoremap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q :q!<CR>
-nnoremap ZX :bdelete<CR>
+nnoremap X :bdelete<CR>
