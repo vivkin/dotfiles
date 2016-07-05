@@ -59,7 +59,7 @@ function! ColorsList()
         autocmd CursorMoved <buffer> try | syntax sync fromstart | execute  'colorscheme ' . getline('.') | finally | endtry
     endif
     if exists('g:colors_name')
-        silent! execute '/' . g:colors_name
+        silent! execute '/^' . g:colors_name . '$'
     endif
 endfunction
 command! Colors call ColorsList()
