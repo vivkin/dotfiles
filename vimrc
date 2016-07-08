@@ -47,6 +47,57 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
 
+function! GetBufferLine()
+    redir => buffers_output
+    silent buffers
+    redir END
+    let bufline = ''
+    for line in split(buffers_output, '\n')
+        let info = matchlist(line, '\v(\d+)\s*(....)\s*\"([^\"]*)\"\s+\w+\s+(\d+)')
+        let name = fnamemodify(info[3], ':t')
+        if info[2][3] == '+'
+            let name .= '+'
+        endif
+        if info[2][0] == '%'
+            let g:activebufnr = info[1] + 0
+            let name = '[' . name . ']'
+        elseif info[2][0] == '#'
+            let name = '^' . name
+        endif
+        let bufline .= ' ' . name . ' '
+    endfor
+    return bufline
+endfunction
+
+function! Foobar1()
+    if g:actual_curbuf == winbufnr(winnr()) | return g:buftabline | else | return '%f%h%r%m' | endif
+endfunction
+function! Foobar2()
+    let status =' %{winbufnr(0) == g:actual_curbuf ? g:buftabline : "%f%h%r%m"}'
+    return status . ' %<%=%{&ft!=""?&ft:"no ft"} | %{&fenc!=""?&fenc:&enc} | %{&fileformat} %4p%%  %4l:%-4c'
+endfunction
+"set statusline=\ %{Foobar1()}\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+"set statusline=%!Foobar2()
+
+let g:buftabline = GetBufferLine()
+let s:statuslineleft = ' %f%h%r%m'
+let s:statuslineright = ' %<%=%{&ft!=""?&ft:"no ft"} | %{&fenc!=""?&fenc:&enc} | %{&fileformat} %4p%%  %4l:%-4c'
+let &statusline = s:statuslineleft . s:statuslineright
+
+function! s:RefreshStatus()
+    for nr in range(1, winnr('$'))
+        call setwinvar(nr, '&statusline', (nr == winnr() && buflisted(winbufnr(nr)) ? g:buftabline : s:statuslineleft) . s:statuslineright)
+    endfor
+endfunction
+
+augroup status
+    autocmd!
+    autocmd BufWinEnter,VimEnter,WinEnter * call <SID>RefreshStatus()
+    "autocmd VimEnter,WinEnter,BufWinEnter * call setwinvar(0, '&statusline', g:buftabline . s:statuslineright)
+    "autocmd WinLeave,BufWinLeave * call setwinvar(0, '&statusline', s:statuslineleft . s:statuslineright)
+    autocmd BufDelete,BufEnter,BufNew,BufWritePost,InsertLeave,VimEnter * let g:buftabline = GetBufferLine()
+augroup END
+
 function! ColorsList()
     let colorslist_name = '\[Color\ List]'
     if bufwinnr(colorslist_name) != -1
