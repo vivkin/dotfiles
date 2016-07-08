@@ -70,32 +70,20 @@ function! GetBufferLine()
     return bufline
 endfunction
 
-function! Foobar1()
-    if g:actual_curbuf == winbufnr(winnr()) | return g:buftabline | else | return '%f%h%r%m' | endif
-endfunction
-function! Foobar2()
-    let status =' %{winbufnr(0) == g:actual_curbuf ? g:buftabline : "%f%h%r%m"}'
-    return status . ' %<%=%{&ft!=""?&ft:"no ft"} | %{&fenc!=""?&fenc:&enc} | %{&fileformat} %4p%%  %4l:%-4c'
-endfunction
-"set statusline=\ %{Foobar1()}\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
-"set statusline=%!Foobar2()
-
-let g:buftabline = GetBufferLine()
-let s:statuslineleft = ' %f%h%r%m'
-let s:statuslineright = ' %<%=%{&ft!=""?&ft:"no ft"} | %{&fenc!=""?&fenc:&enc} | %{&fileformat} %4p%%  %4l:%-4c'
-let &statusline = s:statuslineleft . s:statuslineright
-
 function! s:RefreshStatus()
     for nr in range(1, winnr('$'))
         call setwinvar(nr, '&statusline', (nr == winnr() && buflisted(winbufnr(nr)) ? g:buftabline : s:statuslineleft) . s:statuslineright)
     endfor
 endfunction
 
+let g:buftabline = GetBufferLine()
+let s:statuslineleft = ' %f%h%r%m'
+let s:statuslineright = ' %<%=%{&ft!=""?&ft:"no ft"} | %{&fenc!=""?&fenc:&enc} | %{&fileformat} %4p%%  %4l:%-4c'
+let &statusline = s:statuslineleft . s:statuslineright
+
 augroup status
     autocmd!
     autocmd BufWinEnter,VimEnter,WinEnter * call <SID>RefreshStatus()
-    "autocmd VimEnter,WinEnter,BufWinEnter * call setwinvar(0, '&statusline', g:buftabline . s:statuslineright)
-    "autocmd WinLeave,BufWinLeave * call setwinvar(0, '&statusline', s:statuslineleft . s:statuslineright)
     autocmd BufDelete,BufEnter,BufNew,BufWritePost,InsertLeave,VimEnter * let g:buftabline = GetBufferLine()
 augroup END
 
