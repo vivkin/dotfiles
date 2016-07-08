@@ -26,6 +26,7 @@ endif
 
 call plug#begin('~/.vim/plugged')
 " colorschemes
+Plug 'robertmeta/nofrils'
 Plug 'altercation/vim-colors-solarized'
 Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'crusoexia/vim-monokai'
@@ -110,7 +111,7 @@ function! ColorsList()
         autocmd CursorMoved <buffer> try | syntax sync fromstart | execute  'colorscheme ' . getline('.') | finally | endtry
     endif
     if exists('g:colors_name')
-        silent! execute '/^' . g:colors_name . '$'
+        call search('^\<' . g:colors_name . '\>$')
     endif
 endfunction
 command! Colors call ColorsList()
@@ -176,7 +177,7 @@ set langnoremap
 
 " status line
 set laststatus=2
-set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+"set statusline=\ %f%h%r%m\ \|\ %{s:bufline}\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 
 set clipboard=unnamed
 set display=uhex
@@ -244,13 +245,14 @@ syntax on
 set t_Co=256
 set synmaxcol=1024
 set background=dark
-colorscheme gruvbox
-autocmd GUIEnter * set background=light | colorscheme Tomorrow
+if has("gui_running") | colorscheme toothpaste | else | colorscheme gruvbox | endif
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
 cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
 
+nnoremap <C-n> :bnext<CR>
+nnoremap <C-p> :bprevious<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 nnoremap <D-[> <C-w>W
 nnoremap <D-]> <C-w>w
