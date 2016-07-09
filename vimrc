@@ -143,15 +143,21 @@ command! A call AlternateFile()
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 
 filetype plugin indent on
+
 augroup filetypes
     autocmd!
-    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
     autocmd FileType c,cpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType * setl formatoptions-=o
     autocmd BufReadPost */include/c++/* setf cpp
+augroup END
+
+augroup mappings
+    autocmd!
+    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
 augroup END
 
 " disable annoying bells and flashes
