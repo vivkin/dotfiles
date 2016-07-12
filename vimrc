@@ -48,11 +48,17 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
 
-function! GetBufferLine()
+let g:buflineoffset = 0
+function! UpdateBufferLine()
     redir => buffers_output
     silent buffers
     redir END
+
+    let start = 0
+    let end = 0
+    let width = &columns - 40
     let bufline = ''
+
     for line in split(buffers_output, '\n')
         let info = matchlist(line, '\v(\d+)\s*(....)\s*\"([^\"]*)\"\s+\w+\s+(\d+)')
         let name = fnamemodify(info[3], ':t')
@@ -60,31 +66,31 @@ function! GetBufferLine()
             let name .= '+'
         endif
         if info[2][0] == '%'
+            let start = strlen(bufline)
             let g:activebufnr = info[1] + 0
             let name = '[' . name . ']'
         elseif info[2][0] == '#'
             let name = '^' . name
         endif
         let bufline .= ' ' . name . ' '
+        if info[2][0] == '%'
+            let end = strlen(bufline)
+        endif
     endfor
-    return bufline
-endfunction
 
-function! s:RefreshStatus()
-    for nr in range(1, winnr('$'))
-        call setwinvar(nr, '&statusline', (nr == winnr() && buflisted(winbufnr(nr)) ? g:buftabline : s:statuslineleft) . s:statuslineright)
-    endfor
-endfunction
+    if start < g:buflineoffset
+        let g:buflineoffset = start - 1
+    endif
+    if end > g:buflineoffset + width
+        let g:buflineoffset = end - width
+    endif
 
-let g:buftabline = GetBufferLine()
-let s:statuslineleft = ' %f%h%r%m'
-let s:statuslineright = ' %<%=%{&ft!=""?&ft:"no ft"} | %{&fenc!=""?&fenc:&enc} | %{&fileformat} %4p%%  %4l:%-4c'
-let &statusline = s:statuslineleft . s:statuslineright
+    return strpart(bufline, g:buflineoffset, width)
+endfunction
 
 augroup status
     autocmd!
-    autocmd BufWinEnter,VimEnter,WinEnter * call <SID>RefreshStatus()
-    autocmd BufDelete,BufEnter,BufNew,BufWritePost,InsertLeave,VimEnter * let g:buftabline = GetBufferLine()
+    autocmd BufEnter * echon UpdateBufferLine()
 augroup END
 
 function! ColorsList()
@@ -171,7 +177,7 @@ set langnoremap
 
 " status line
 set laststatus=2
-"set statusline=\ %f%h%r%m\ \|\ %{s:bufline}\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 
 set clipboard=unnamed
 set display=uhex
@@ -239,7 +245,7 @@ syntax on
 set t_Co=256
 set synmaxcol=1024
 set background=dark
-if has("gui_running") | colorscheme toothpaste | else | colorscheme gruvbox | endif
+if has("gui_running") | colorscheme toothpaste | else | colorscheme nofrils-dark | endif
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
