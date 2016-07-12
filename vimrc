@@ -48,51 +48,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
 
-let g:buflineoffset = 0
-function! UpdateBufferLine()
-    redir => buffers_output
-    silent buffers
-    redir END
-
-    let start = 0
-    let end = 0
-    let width = &columns - 40
-    let bufline = ''
-
-    for line in split(buffers_output, '\n')
-        let info = matchlist(line, '\v(\d+)\s*(....)\s*\"([^\"]*)\"\s+\w+\s+(\d+)')
-        let name = fnamemodify(info[3], ':t')
-        if info[2][3] == '+'
-            let name .= '+'
-        endif
-        if info[2][0] == '%'
-            let start = strlen(bufline)
-            let g:activebufnr = info[1] + 0
-            let name = '[' . name . ']'
-        elseif info[2][0] == '#'
-            let name = '^' . name
-        endif
-        let bufline .= ' ' . name . ' '
-        if info[2][0] == '%'
-            let end = strlen(bufline)
-        endif
-    endfor
-
-    if start < g:buflineoffset
-        let g:buflineoffset = start - 1
-    endif
-    if end > g:buflineoffset + width
-        let g:buflineoffset = end - width
-    endif
-
-    return strpart(bufline, g:buflineoffset, width)
-endfunction
-
-augroup status
-    autocmd!
-    autocmd BufEnter * echon UpdateBufferLine()
-augroup END
-
 function! ColorsList()
     let colorslist_name = '\[Color\ List]'
     if bufwinnr(colorslist_name) != -1
@@ -147,6 +102,47 @@ endfunction
 command! A call AlternateFile()
 
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
+
+let g:buflineoffset = 0
+
+function! UpdateBufferLine()
+    redir => buffers_output
+    silent buffers
+    redir END
+
+    let start = 0
+    let end = 0
+    let width = &columns - 20
+    let bufline = ''
+
+    for line in split(buffers_output, '\n')
+        let info = matchlist(line, '\v(\d+)(......)"([^\"]*)".*')
+        let name = fnamemodify(info[3], ':t')
+        if info[2][4] == '+'
+            let name .= '+'
+        endif
+        if info[2][1] == '%'
+            let name = '[' . name . ']'
+            let start = strlen(bufline)
+            let end = start + strlen(name) + 1
+        endif
+        let bufline .= ' ' . name
+    endfor
+
+    if start < g:buflineoffset
+        let g:buflineoffset = start
+    endif
+    if end > g:buflineoffset + width
+        let g:buflineoffset = end - width
+    endif
+
+    return strpart(bufline, g:buflineoffset, width)
+endfunction
+
+augroup status
+    autocmd!
+    autocmd BufEnter * echon UpdateBufferLine()
+augroup END
 
 filetype plugin indent on
 
@@ -251,11 +247,11 @@ cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
 cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
 
-nnoremap <C-n> :bnext<CR>
-nnoremap <C-p> :bprevious<CR>
 nnoremap <CR> :nohlsearch<CR><CR>
 nnoremap <D-[> <C-w>W
 nnoremap <D-]> <C-w>w
+nnoremap <silent> <C-n> :bnext<CR>
+nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
