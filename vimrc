@@ -16,7 +16,7 @@ let g:loaded_zipPlugin = 1
 
 " man pages and %
 runtime ftplugin/man.vim
-runtime macros/matchit.vim
+packadd matchit
 
 " install vim-plug
 if !isdirectory(expand('~/.vim/plugged'))
@@ -88,18 +88,38 @@ endfunction
 command! CMakeGNU call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
 
+" switch header and source {{{
 function! AlternateFile()
-    if match(expand('%:e'), '\v\cc+[px]*') != -1
-        setl suffixesadd=.h,.hpp,.hxx
-        execute 'find %:t:r'
-    elseif match(expand('%:e'), '\v\ch+[px]*') != -1
-        setl suffixesadd=.c,.cc,.cpp,.cxx,.m,.mm
-        execute 'find %:t:r'
+    let extension = expand('%:e')
+
+    if match(extension, '\v\cc+[px]*') != -1
+        let extlist = ['.h', '.hpp', '.hxx']
+    elseif match(extension, '\v\ch+[px]*') != -1
+        let extlist = ['.c', '.cpp', '.cxx']
     else
         echohl WarningMsg | echo "No existing alternate available" | echohl None
+        return 0
     endif
+
+    let basename = expand("%:t:r")
+    for extension in extlist
+        let altname = findfile(basename . extension)
+        if altname != ''
+            if bufwinnr(altname) != -1
+                silent execute bufwinnr(altname) . 'wincmd w'
+            elseif bufnr(altname) != -1
+                silent execute 'buffer ' . bufnr(altname)
+            else
+                silent execute 'edit ' . altname
+            endif
+            return 1
+        endif
+    endfor
+
+    return 0
 endfunction
 command! A call AlternateFile()
+" }}}
 
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 
