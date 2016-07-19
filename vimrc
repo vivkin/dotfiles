@@ -225,7 +225,7 @@ set ignorecase
 set smartcase
 
 set wildmenu
-set wildmode=longest,full
+set wildmode=list:longest,full
 
 set autoread
 set autowrite
