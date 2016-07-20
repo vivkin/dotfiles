@@ -1,5 +1,12 @@
-set nocompatible
+set runtimepath^=$HOME/dotfiles/vimfiles
 
+" don't set macvim bindings and colorscheme
+if has("gui_macvim")
+    let macvim_skip_cmd_opt_movement = 1
+    let macvim_skip_colorscheme = 1
+endif
+
+" set <Leader> before loading plugins
 let mapleader=','
 
 " don't load unused plugins
@@ -16,7 +23,7 @@ let g:loaded_zipPlugin = 1
 
 " man pages and %
 runtime ftplugin/man.vim
-packadd matchit
+runtime macros/matchit.vim
 
 " install vim-plug
 if !isdirectory(expand('~/.vim/plugged'))
@@ -48,122 +55,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
 
-function! ColorsList()
-    let colorslist_name = '\[Color\ List]'
-    if bufwinnr(colorslist_name) != -1
-        silent execute bufwinnr(colorslist_name) . 'wincmd w'
-    else
-        silent execute '32 vnew' colorslist_name
-        call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
-        setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nomodifiable nonumber nowrap
-        nnoremap <silent> <buffer> q :close<CR>
-        autocmd CursorMoved <buffer> try | syntax sync fromstart | execute  'colorscheme ' . getline('.') | finally | endtry
-    endif
-    if exists('g:colors_name')
-        call search('^\<' . g:colors_name . '\>$')
-    endif
-endfunction
-command! Colors call ColorsList()
-
-function! CompilerIncludePath(cc)
-    let output = system(a:cc . ' -v -E - < /dev/null > /dev/null')
-    let dirs = matchstr(output, '\v\> search starts here:\n\s*\zs(\n|.)*\n\zeEnd of search list')
-    return substitute(dirs, '\v(\s*\(framework directory\))?\n\s*', ',', 'g')
-endfunction
-command! -nargs=+ IncludePath let &path.=CompilerIncludePath('<args>')
-command! PathGNU IncludePath gcc-6 -x c++ -std=c++14
-command! PathClang IncludePath clang -x c++ -std=c++14
-
-function! CMake(build_dir, ...)
-    if filereadable("CMakeLists.txt")
-        let build_dir = fnameescape(a:build_dir)
-        execute '!(mkdir -p ' . build_dir . ' && cd ' . build_dir . ' && cmake ' . join(a:000) . ' ' .  getcwd() . ')'
-        if v:shell_error == 0
-            let &makeprg = 'cmake --build ' . build_dir . ' -- -j ' . substitute(system('getconf _NPROCESSORS_ONLN'), '\n', '', 'g')
-        endif
-    else
-        echoerr 'CMakeLists.txt not found'
-    endif
-endfunction
-command! CMakeGNU call CMake('build-gnu', '-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-command! CMakeClang call CMake('build-clang', '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=RelWithDebInfo')
-
-" switch header and source {{{
-function! AlternateFile()
-    let extension = expand('%:e')
-
-    if match(extension, '\v\cc+[px]*') != -1
-        let extlist = ['.h', '.hpp', '.hxx']
-    elseif match(extension, '\v\ch+[px]*') != -1
-        let extlist = ['.c', '.cpp', '.cxx']
-    else
-        echohl WarningMsg | echo "No existing alternate available" | echohl None
-        return 0
-    endif
-
-    let basename = expand("%:t:r")
-    for extension in extlist
-        let altname = findfile(basename . extension)
-        if altname != ''
-            if bufwinnr(altname) != -1
-                silent execute bufwinnr(altname) . 'wincmd w'
-            elseif bufnr(altname) != -1
-                silent execute 'buffer ' . bufnr(altname)
-            else
-                silent execute 'edit ' . altname
-            endif
-            return 1
-        endif
-    endfor
-
-    return 0
-endfunction
-command! A call AlternateFile()
-" }}}
-
-command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-
-let g:buflineoffset = 0
-
-function! UpdateBufferLine()
-    redir => buffers_output
-    silent buffers
-    redir END
-
-    let start = 0
-    let end = 0
-    let width = &columns - 20
-    let bufline = ''
-
-    for line in split(buffers_output, '\n')
-        let info = matchlist(line, '\v(\d+)(......)"([^\"]*)".*')
-        let name = fnamemodify(info[3], ':t')
-        if info[2][4] == '+'
-            let name .= '+'
-        endif
-        if info[2][1] == '%'
-            let name = '[' . name . ']'
-            let start = strlen(bufline)
-            let end = start + strlen(name) + 1
-        endif
-        let bufline .= ' ' . name
-    endfor
-
-    if start < g:buflineoffset
-        let g:buflineoffset = start
-    endif
-    if end > g:buflineoffset + width
-        let g:buflineoffset = end - width
-    endif
-
-    return strpart(bufline, g:buflineoffset, width)
-endfunction
-
-augroup status
-    autocmd!
-    autocmd BufEnter * echon UpdateBufferLine()
-augroup END
-
 filetype plugin indent on
 
 augroup filetypes
@@ -194,6 +85,7 @@ set langnoremap
 " status line
 set laststatus=2
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+set statusline+=%#WarningMsg#%{statusline#whitespace#warning()}%*
 
 set clipboard=unnamed
 set display=uhex
@@ -252,16 +144,14 @@ if has("gui_running")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
         set guifont=Cousine:h14,Office\ Code\ Pro:h13,Menlo:h13
-        let macvim_skip_colorscheme = 1
-        let macvim_skip_cmd_opt_movement = 1
     endif
 endif
 
 syntax on
 set t_Co=256
 set synmaxcol=1024
-set background=dark
-if has("gui_running") | colorscheme toothpaste | else | colorscheme nofrils-dark | endif
+set background=light
+colorscheme solarized
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
