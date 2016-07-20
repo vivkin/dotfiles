@@ -1,15 +1,7 @@
-set runtimepath^=$HOME/dotfiles/vimfiles
-
-" don't set macvim bindings and colorscheme
-if has("gui_macvim")
-    let macvim_skip_cmd_opt_movement = 1
-    let macvim_skip_colorscheme = 1
-endif
-
-" set <Leader> before loading plugins
+" set <Leader> before loading any plugin
 let mapleader=','
 
-" don't load unused plugins
+" don't load unused plugins {{{
 let g:loaded_2html_plugin = 1
 let g:loaded_getscriptPlugin = 1
 let g:loaded_gzip = 1
@@ -20,18 +12,59 @@ let g:loaded_spellfile_plugin = 1
 let g:loaded_tarPlugin = 1
 let g:loaded_vimballPlugin = 1
 let g:loaded_zipPlugin = 1
+" }}}
 
-" man pages and %
-runtime ftplugin/man.vim
-runtime macros/matchit.vim
+" skip macvim bindings and colorscheme {{{
+if has("gui_macvim")
+    let macvim_skip_cmd_opt_movement = 1
+    let macvim_skip_colorscheme = 1
+endif
+" }}}
 
-" install vim-plug
-if !isdirectory(expand('~/.vim/plugged'))
-    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+" defaults from nvim {{{
+if !has('nvim')
+    filetype plugin indent on
+    syntax enable
+
+    set autoindent
+    set autoread
+    set backspace=indent,eol,start
+    set complete-=i
+    set display=lastline
+    set encoding=utf-8
+    set formatoptions=tcqj
+    set history=10000
+    set hlsearch
+    set incsearch
+    set langnoremap
+    set laststatus=2
+    set listchars=tab:>\ ,trail:-,nbsp:+
+    set mouse=a
+    set nocompatible
+    set nrformats=bin,hex
+    set sessionoptions-=options
+    set smarttab
+    set tabpagemax=50
+    set tags=./tags;,tags
+    set ttyfast
+    set viminfo^=!
+    set wildmenu
+
+    runtime! macros/matchit.vim
+    runtime! ftplugin/man.vim
+endif
+" }}}
+
+" download vim-plug {{{
+if globpath(&rtp, 'autoload/plug.vim') == '' && executable('curl')
+    silent execute '!curl --fail --silent --location --create-dirs'
+                \ . ' --output ' . split(&rtp, ',')[0] . '/autoload/plug.vim'
+                \ . ' --url https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     autocmd VimEnter * PlugInstall
 endif
+" }}}
 
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 " colorschemes
 Plug 'robertmeta/nofrils'
 Plug 'altercation/vim-colors-solarized'
@@ -53,6 +86,7 @@ Plug 'rking/ag.vim'
 Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
+Plug '$HOME/dotfiles/vimfiles'
 call plug#end()
 
 filetype plugin indent on
@@ -117,7 +151,7 @@ set ignorecase
 set smartcase
 
 set wildmenu
-set wildmode=longest,list,full
+set wildmode=list:longest,full
 
 set autoread
 set autowrite
@@ -172,3 +206,5 @@ nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q :q!<CR>
 nnoremap X :bdelete<CR>
+
+" vim:set fdm=marker fdl=0:
