@@ -6,6 +6,9 @@ case $- in
       *) return;;
 esac
 
+# local binaries
+export PATH="~/.local/bin:$PATH"
+
 # command promt
 if [ $EUID == 0 ]; then
   ucolor="\033[31m"
