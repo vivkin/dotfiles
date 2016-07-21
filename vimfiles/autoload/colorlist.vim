@@ -1,4 +1,4 @@
-function! colorlist#show()
+function! colorlist#open()
     let l:bufname = '\[Color\ List]'
 
     if bufwinnr(l:bufname) != -1

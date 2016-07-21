@@ -107,6 +107,16 @@ augroup mappings
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
 augroup END
 
+augroup bufline
+    autocmd!
+    autocmd BufEnter * call bufline#render()
+augroup END
+
+command! A call alternatefile#open()
+command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
+command! Colors call colorlist#open()
+command! -nargs=+ IncludePath call includepath#add('<args>')
+
 " disable annoying bells and flashes
 set belloff=all
 
