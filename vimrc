@@ -78,8 +78,6 @@ Plug 'morhetz/gruvbox'
 Plug 'nanotech/jellybeans.vim'
 Plug 'vivkin/flatland.vim'
 " plugins
-Plug 'EinfachToll/DidYouMean'
-Plug 'ajh17/VimCompletesMe'
 Plug 'jeetsukumaran/vim-filebeagle'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
@@ -88,8 +86,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 Plug '$HOME/dotfiles/vimfiles'
 call plug#end()
-
-filetype plugin indent on
 
 augroup filetypes
     autocmd!
@@ -110,6 +106,11 @@ augroup END
 augroup bufline
     autocmd!
     autocmd BufEnter * call bufline#render()
+augroup END
+
+augroup didyoumean
+    autocmd!
+    autocmd BufNewFile * call didyoumean#ask()
 augroup END
 
 command! A call alternatefile#open()

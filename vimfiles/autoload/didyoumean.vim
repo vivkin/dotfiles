@@ -1,0 +1,14 @@
+function! didyoumean#ask()
+    let filename = expand("%")
+    if filereadable(filename) | return | endif
+
+    let filenames = glob(filename . '*', 1, 1)
+    if empty(filenames) | return | endif
+
+    let nr = inputlist(['Did you mean:'] + map(range(1, len(filenames)), 'v:val . ". " . filenames[v:val - 1]'))
+    if nr >= 1 && nr <= len(filenames)
+        silent execute 'bwipeout'
+        silent execute 'edit ' . filenames[nr - 1]
+        filetype detect
+    endif
+endfunction
