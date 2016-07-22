@@ -103,11 +103,6 @@ augroup mappings
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
 augroup END
 
-augroup bufline
-    autocmd!
-    autocmd BufEnter * call bufline#render()
-augroup END
-
 augroup didyoumean
     autocmd!
     autocmd BufNewFile * call didyoumean#ask()
@@ -131,6 +126,10 @@ set langnoremap
 set laststatus=2
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 set statusline+=%#WarningMsg#%{statusline#whitespace#warning()}%*
+
+" tab line
+set showtabline=2
+set tabline=%!bufline#tabline()
 
 set clipboard=unnamed
 set display=uhex

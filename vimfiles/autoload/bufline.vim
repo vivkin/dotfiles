@@ -1,48 +1,45 @@
-let s:buflineoffset = 0
+let g:buflineoffset = 0
 
-function! bufline#generate(first, last)
-    let l:s = ''
-    let l:n = a:first
-    while l:n <= a:last
-        if buflisted(l:n) && getbufvar(l:n, '&buftype') != 'quickfix'
-            let l:fn = l:n . ':' . fnamemodify(bufname(l:n), ':t')
-            if bufname(l:n) == ''
-                let l:fn .= '*'
-            endif
-            if getbufvar(l:n, '&mod')
-                let l:fn .= '+'
-            endif
-            if bufnr('%') == l:n
-                let l:s .= '[' . l:fn . ']'
-            else
-                let l:s .= ' ' . l:fn . ' '
-            endif
+function! s:buflabel(num)
+    if empty(bufname(a:num))
+        if getbufvar(a:num, '&buftype') == 'quickfix'
+            let name = 'Quickfix List'
+        else
+            let name = 'No Name'
         endif
-        let l:n = l:n + 1
-    endwhile
-    return l:s
+    else
+        let name = pathshorten(fnamemodify(bufname(a:num), ':~:.'))
+    endif
+    return a:num . ':' . name . (getbufvar(a:num, '&mod') ? '+' : '')
 endfunction
 
-function! bufline#render()
-    let l:active = bufnr('%')
-    let l:strings = [
-                \ bufline#generate(1, l:active - 1),
-                \ bufline#generate(l:active, l:active),
-                \ bufline#generate(l:active + 1, bufnr('$'))]
+function! bufline#tabline()
+    let width = &columns
+    let active = bufnr('%')
 
-    let l:width = &columns - 12
-    let l:left = strwidth(l:strings[0])
-    let l:right = l:left + strwidth(l:strings[1])
-
-    if s:buflineoffset > l:left
-        let s:buflineoffset = l:left
-    endif
-    if s:buflineoffset + l:width < l:right
-        let s:buflineoffset = l:right - l:width
+    let center = ''
+    if buflisted(active)
+        let center = '[' . s:buflabel(active) . ']'
     endif
 
-    echohl LineNr | echon "\r" strpart(l:strings[0], s:buflineoffset)
-    echohl CursorLineNr | echon l:strings[1]
-    echohl LineNr | echon strpart(l:strings[2], 0, s:buflineoffset + l:width - l:right)
-    echohl None
+    let left = ''
+    for i in filter(range(1, active - 1), 'buflisted(v:val)')
+        let left .= ' ' . s:buflabel(i) . ' '
+    endfor
+
+    let right = ''
+    for i in filter(range(active + 1, bufnr('$')), 'buflisted(v:val)')
+        let right .= ' ' . s:buflabel(i) . ' '
+    endfor
+
+    let left_end = strwidth(left)
+    if g:buflineoffset > left_end | let g:buflineoffset = left_end | endif
+    let right_start = left_end + strwidth(center)
+    if g:buflineoffset < right_start - width | let g:buflineoffset = right_start - width | endif
+
+    let left = '%#LineNr#'. strpart(left, g:buflineoffset, left_end - g:buflineoffset)
+    let center = '%#CursorLineNr#' . center
+    let right = '%#LineNr#'. strpart(right, 0, g:buflineoffset + width - right_start)
+
+    return left . center . right
 endfunction
