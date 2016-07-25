@@ -112,6 +112,7 @@ command! A call alternatefile#open()
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 command! Colors call colorlist#open()
 command! -nargs=+ IncludePath call includepath#add('<args>')
+command! -nargs=1 -complete=help H enew | setl buftype=help | execute 'help <args>' | setl buflisted
 
 " disable annoying bells and flashes
 set belloff=all
