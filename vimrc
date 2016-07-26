@@ -196,8 +196,8 @@ endif
 syntax on
 set t_Co=256
 set synmaxcol=1024
-set background=light
-colorscheme solarized
+set background=dark
+colorscheme monokai
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>

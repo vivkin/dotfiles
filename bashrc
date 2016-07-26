@@ -9,18 +9,38 @@ esac
 # local binaries
 export PATH="~/.local/bin:$PATH"
 
-# command promt
-if [ $EUID == 0 ]; then
-  ucolor="\033[31m"
-else
-  ucolor="\033[32m"
-fi
+#colors
+RED="$(tput setaf 1)"
+GREEN="$(tput setaf 2)"
+YELLOW="$(tput setaf 3)"
+BLUE="$(tput setaf 4)"
+MAGENTA="$(tput setaf 5)"
+CYAN="$(tput setaf 6)"
+WHITE="$(tput setaf 7)"
+GRAY="$(tput setaf 8)"
+BOLD="$(tput bold)"
+UNDERLINE="$(tput sgr 0 1)"
+INVERT="$(tput sgr 1 0)"
+NOCOLOR="$(tput sgr0)"
 
-if [ -v SSH_TTY ]; then
-  hcolor="\033[31m"
-else
-  hcolor="\033[32m"
-fi
+prompt_pure_username=" ${GREEN}\u${NOCOLOR}@\h"
+prompt_pure_directory=" ${BLUE}\w${NOCOLOR}"
+
+# show username@host if logged in through SSH
+[[ -v SSH_TTY ]] && prompt_pure_username=" ${YELLOW}\u${GRAY}@\h"
+
+# show username@host if root, with username in white
+[[ $EUID == 0 ]] && prompt_pure_username=" ${RED}\u${GRAY}@\h"
+
+ps1_prompt_symbol() {
+  if [ $? != 0 ]; then 
+    #echo "${RED}❯"
+    prompt_pure_symbol=" ${RED}❯${NOCOLOR}"
+  else
+    #echo "${MAGENTA}❯"
+    prompt_pure_symbol=" ${MAGENTA}❯${NOCOLOR}"
+  fi
+}
 
 ps1_git_branch() {
   local BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
@@ -29,10 +49,13 @@ ps1_git_branch() {
     local STAGED
     git diff --no-ext-diff --quiet || DIRTY='*'
     git diff --no-ext-diff --cached --quiet || STAGED='+'
-    echo "[${BRANCH}${DIRTY}${STAGED}]"
+    prompt_pure_branch=" ${GRAY}${BRANCH}${DIRTY}${STAGED}${NOCOLOR}"
   fi
 }
-export PS1="\[${ucolor}\]\u\[\033[00m\]@\[${hcolor}\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[01;31m\]\$(ps1_git_branch)\[\033[00m\]\$ "
+
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }ps1_prompt_symbol; ps1_git_branch"
+PS1="${prompt_pure_username}${prompt_pure_directory}\${prompt_pure_branch}\${prompt_pure_symbol} "
+PS2="\${prompt_pure_symbol} "
 
 # colored ls and grep
 if [ $(uname) == Darwin ]; then
@@ -47,6 +70,8 @@ alias grep='grep --color=auto'
 
 # options
 shopt -s no_empty_cmd_completion
+shopt -s cmdhist
+shopt -s cdspell
 
 # history
 shopt -s histappend
