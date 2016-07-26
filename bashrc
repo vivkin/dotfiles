@@ -23,11 +23,9 @@ COLOR_UNDERLINE="$(tput sgr 0 1)"
 COLOR_INVERT="$(tput sgr 1 0)"
 COLOR_RESET="$(tput sgr0)"
 
-# show username@host if logged in through SSH
-[[ -v SSH_TTY ]] && PROMPT_USERNAME="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
-
-# show username@host if root, with username in white
-[[ $EUID == 0 ]] && PROMPT_USERNAME="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
+update_window_title() {
+  echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
+}
 
 ps1_git_branch() {
   PROMPT_BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
@@ -37,7 +35,14 @@ ps1_git_branch() {
   fi
 }
 
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }ps1_git_branch"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_window_title; ps1_git_branch"
+
+# show username@host if logged in through SSH
+[[ -v SSH_TTY ]] && PROMPT_USERNAME="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
+
+# show username@host if root, with username in white
+[[ $EUID == 0 ]] && PROMPT_USERNAME="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
+
 PROMPT_SYMBOL="\`if [ \$? = 0 ]; then echo \[\${COLOR_CYAN}\]; else echo \[\${COLOR_RED}\]; fi\`❯\[\${COLOR_RESET}\]"
 PS1="${PROMPT_USERNAME:+$PROMPT_USERNAME }\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]\${PROMPT_BRANCH:+ \[$COLOR_GRAY\]\$PROMPT_BRANCH\[$COLOR_RESET\]} ${PROMPT_SYMBOL} "
 PS2="${PROMPT_SYMBOL} "
@@ -72,10 +77,3 @@ elif [ -f /usr/share/bash-completion/bash_completion ]; then
 elif [ -f /etc/bash_completion ]; then
   . /etc/bash_completion
 fi
-
-# set terminal window title
-update_window_title() {
-  local TITLE=${PWD/#$HOME/\~}
-  echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${TITLE##*/}\a"
-}
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_window_title"
