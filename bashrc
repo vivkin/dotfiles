@@ -10,52 +10,37 @@ esac
 export PATH="~/.local/bin:$PATH"
 
 #colors
-RED="$(tput setaf 1)"
-GREEN="$(tput setaf 2)"
-YELLOW="$(tput setaf 3)"
-BLUE="$(tput setaf 4)"
-MAGENTA="$(tput setaf 5)"
-CYAN="$(tput setaf 6)"
-WHITE="$(tput setaf 7)"
-GRAY="$(tput setaf 8)"
-BOLD="$(tput bold)"
-UNDERLINE="$(tput sgr 0 1)"
-INVERT="$(tput sgr 1 0)"
-NOCOLOR="$(tput sgr0)"
-
-prompt_pure_username=" ${GREEN}\u${NOCOLOR}@\h"
-prompt_pure_directory=" ${BLUE}\w${NOCOLOR}"
+COLOR_RED="$(tput setaf 1)"
+COLOR_GREEN="$(tput setaf 2)"
+COLOR_YELLOW="$(tput setaf 3)"
+COLOR_BLUE="$(tput setaf 4)"
+COLOR_MAGENTA="$(tput setaf 5)"
+COLOR_CYAN="$(tput setaf 6)"
+COLOR_WHITE="$(tput setaf 7)"
+COLOR_GRAY="$(tput setaf 8)"
+COLOR_BOLD="$(tput bold)"
+COLOR_UNDERLINE="$(tput sgr 0 1)"
+COLOR_INVERT="$(tput sgr 1 0)"
+COLOR_RESET="$(tput sgr0)"
 
 # show username@host if logged in through SSH
-[[ -v SSH_TTY ]] && prompt_pure_username=" ${YELLOW}\u${GRAY}@\h"
+[[ -v SSH_TTY ]] && PROMPT_USERNAME="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
 
 # show username@host if root, with username in white
-[[ $EUID == 0 ]] && prompt_pure_username=" ${RED}\u${GRAY}@\h"
-
-ps1_prompt_symbol() {
-  if [ $? != 0 ]; then 
-    #echo "${RED}❯"
-    prompt_pure_symbol=" ${RED}❯${NOCOLOR}"
-  else
-    #echo "${MAGENTA}❯"
-    prompt_pure_symbol=" ${MAGENTA}❯${NOCOLOR}"
-  fi
-}
+[[ $EUID == 0 ]] && PROMPT_USERNAME="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
 
 ps1_git_branch() {
-  local BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
-  if [ -n "$BRANCH" ]; then
-    local DIRTY
-    local STAGED
-    git diff --no-ext-diff --quiet || DIRTY='*'
-    git diff --no-ext-diff --cached --quiet || STAGED='+'
-    prompt_pure_branch=" ${GRAY}${BRANCH}${DIRTY}${STAGED}${NOCOLOR}"
+  PROMPT_BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
+  if [ -n "$PROMPT_BRANCH" ]; then
+    git diff --no-ext-diff --quiet || PROMPT_BRANCH="${PROMPT_BRANCH}*"
+    git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH="${PROMPT_BRANCH}+"
   fi
 }
 
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }ps1_prompt_symbol; ps1_git_branch"
-PS1="${prompt_pure_username}${prompt_pure_directory}\${prompt_pure_branch}\${prompt_pure_symbol} "
-PS2="\${prompt_pure_symbol} "
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }ps1_git_branch"
+PROMPT_SYMBOL="\`if [ \$? = 0 ]; then echo \[\${COLOR_CYAN}\]; else echo \[\${COLOR_RED}\]; fi\`❯\[\${COLOR_RESET}\]"
+PS1="${PROMPT_USERNAME:+$PROMPT_USERNAME }\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]\${PROMPT_BRANCH:+ \[$COLOR_GRAY\]\$PROMPT_BRANCH\[$COLOR_RESET\]} ${PROMPT_SYMBOL} "
+PS2="${PROMPT_SYMBOL} "
 
 # colored ls and grep
 if [ $(uname) == Darwin ]; then

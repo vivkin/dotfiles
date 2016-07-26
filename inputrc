@@ -3,5 +3,4 @@ set completion-query-items 192
 set editing-mode vi
 set match-hidden-files off
 set show-all-if-ambiguous on
-set show-mode-in-prompt on
 set visible-stats on
