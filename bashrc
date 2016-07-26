@@ -30,8 +30,11 @@ update_window_title() {
 ps1_git_branch() {
   PROMPT_BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
   if [ -n "$PROMPT_BRANCH" ]; then
-    git diff --no-ext-diff --quiet || PROMPT_BRANCH="${PROMPT_BRANCH}*"
-    git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH="${PROMPT_BRANCH}+"
+    git diff --no-ext-diff --quiet || PROMPT_BRANCH+="*"
+    git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH+="+"
+    local ARROWS=($(git rev-list --left-right --count HEAD...@'{u}'))
+    [[ ${ARROWS[0]} != 0 ]] && PROMPT_BRANCH+=" ↑${ARROWS[0]}"
+    [[ ${ARROWS[1]} != 0 ]] && PROMPT_BRANCH+=" ↓${ARROWS[1]}"
   fi
 }
 
