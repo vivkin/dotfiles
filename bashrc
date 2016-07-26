@@ -52,6 +52,7 @@ shopt -s no_empty_cmd_completion
 shopt -s histappend
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=10000
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a"
 
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
@@ -67,4 +68,4 @@ update_window_title() {
   local TITLE=${PWD/#$HOME/\~}
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${TITLE##*/}\a"
 }
-PROMPT_COMMAND=update_window_title
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_window_title"
