@@ -23,35 +23,34 @@ COLOR_UNDERLINE="$(tput sgr 0 1)"
 COLOR_INVERT="$(tput sgr 1 0)"
 COLOR_RESET="$(tput sgr0)"
 
-update_window_title() {
+update_terminal_title() {
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
 }
 
-ps1_git_branch() {
+update_prompt_branch() {
   PROMPT_BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
   if [ -n "$PROMPT_BRANCH" ]; then
     git diff --no-ext-diff --quiet || PROMPT_BRANCH+="*"
     git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH+="+"
-    local ARROWS=($(git rev-list --left-right --count HEAD...@'{u}'))
-    [[ ${ARROWS[0]} != 0 ]] && PROMPT_BRANCH+=" ↑${ARROWS[0]}"
-    [[ ${ARROWS[1]} != 0 ]] && PROMPT_BRANCH+=" ↓${ARROWS[1]}"
+    local TRACKING=($(git rev-list --left-right --count HEAD...@'{u}'))
+    [[ ${TRACKING[0]} != 0 ]] && PROMPT_BRANCH+=" ↑${TRACKING[0]}"
+    [[ ${TRACKING[1]} != 0 ]] && PROMPT_BRANCH+=" ↓${TRACKING[1]}"
   fi
 }
 
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_window_title; ps1_git_branch"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title; update_prompt_branch"
 
 # show username@host if logged in through SSH
 [[ -v SSH_TTY ]] && PROMPT_USERNAME="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
-
 # show username@host if root, with username in white
 [[ $EUID == 0 ]] && PROMPT_USERNAME="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
-
 PS1="${PROMPT_USERNAME:+$PROMPT_USERNAME }"
 PS1+="\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]"
 PS1+="\${PROMPT_BRANCH:+ \[${COLOR_GRAY}\]\$PROMPT_BRANCH\[${COLOR_RESET}\]}"
 PS1+=" \$([ \${?} = 0 ] && echo \[\${COLOR_CYAN}\] || echo \[\${COLOR_RED}\])❯\[${COLOR_RESET}\] "
 
-# colored ls and grep
+# colored grep and ls
+alias grep='grep --color=auto'
 if [ $(uname) = Darwin ]; then
   alias ls='ls -GF'
 else
@@ -60,15 +59,14 @@ fi
 alias l='ls -lh'
 alias la='ls -A'
 alias ll='ls -lA'
-alias grep='grep --color=auto'
 
 # options
-shopt -s no_empty_cmd_completion
-shopt -s cmdhist
 shopt -s cdspell
+shopt -s cmdhist
+shopt -s histappend
+shopt -s no_empty_cmd_completion
 
 # history
-shopt -s histappend
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=10000
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a"
