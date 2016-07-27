@@ -46,12 +46,13 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_window_title; ps1_git
 # show username@host if root, with username in white
 [[ $EUID == 0 ]] && PROMPT_USERNAME="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
 
-PROMPT_SYMBOL="\`if [ \$? = 0 ]; then echo \[\${COLOR_CYAN}\]; else echo \[\${COLOR_RED}\]; fi\`❯\[\${COLOR_RESET}\]"
-PS1="${PROMPT_USERNAME:+$PROMPT_USERNAME }\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]\${PROMPT_BRANCH:+ \[$COLOR_GRAY\]\$PROMPT_BRANCH\[$COLOR_RESET\]} ${PROMPT_SYMBOL} "
-PS2="${PROMPT_SYMBOL} "
+PS1="${PROMPT_USERNAME:+$PROMPT_USERNAME }"
+PS1+="\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]"
+PS1+="\${PROMPT_BRANCH:+ \[${COLOR_GRAY}\]\$PROMPT_BRANCH\[${COLOR_RESET}\]}"
+PS1+=" \$([ \${?} = 0 ] && echo \[\${COLOR_CYAN}\] || echo \[\${COLOR_RED}\])❯\[${COLOR_RESET}\] "
 
 # colored ls and grep
-if [ $(uname) == Darwin ]; then
+if [ $(uname) = Darwin ]; then
   alias ls='ls -GF'
 else
   alias ls='ls --color=auto -F'
