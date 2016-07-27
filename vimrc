@@ -66,23 +66,16 @@ endif
 
 call plug#begin()
 " colorschemes
-Plug 'robertmeta/nofrils'
+Plug 'chriskempson/base16-vim'
 Plug 'altercation/vim-colors-solarized'
-Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'crusoexia/vim-monokai'
-Plug 'jonathanfilip/vim-lucius'
 Plug 'kabbamine/yowish.vim'
-Plug 'kristijanhusak/vim-hybrid-material'
-Plug 'mhinz/vim-janah'
 Plug 'morhetz/gruvbox'
-Plug 'nanotech/jellybeans.vim'
-Plug 'vivkin/flatland.vim'
 " plugins
 Plug 'justinmk/vim-dirvish'
-"Plug 'jeetsukumaran/vim-filebeagle'
-Plug 'octol/vim-cpp-enhanced-highlight'
+"Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
-Plug 'tikhomirov/vim-glsl'
+"Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 Plug '$HOME/dotfiles/vimfiles'
@@ -194,10 +187,13 @@ if has("gui_running")
 endif
 
 syntax on
-set t_Co=256
 set synmaxcol=1024
-set background=dark
-colorscheme monokai
+
+if filereadable(expand("~/.vimrc_background"))
+  let g:base16_shell_path='~/.config/base16-shell/scripts'
+  let base16colorspace=256
+  source ~/.vimrc_background
+endif
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
