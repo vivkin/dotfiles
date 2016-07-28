@@ -56,29 +56,38 @@ endif
 " }}}
 
 " download vim-plug {{{
-if globpath(&rtp, 'autoload/plug.vim') == '' && executable('curl')
-    silent execute '!curl --fail --silent --location --create-dirs'
-                \ . ' --output ' . split(&rtp, ',')[0] . '/autoload/plug.vim'
-                \ . ' --url https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+function s:download(filename, url)
+    if (executable('curl'))
+        silent execute '!curl --fail --silent --location --create-dirs --output ' . a:filename . ' --url ' . a:url
+        return v:shell_error == 0
+    elseif (executable('wget'))
+        silent execute 'mkdir -p ' . fnamemodify(a:filename, ':h') . ' && wget --quiet --output-document ' . a:filename . ' ' . a:url
+        return v:shell_error == 0
+    else
+        echoerr 'curl or wget not found'
+        return 0
+    endif
+endfunction
+
+if empty(globpath(&rtp, 'autoload/plug.vim')) && download(split(&rtp, ',')[0] . '/autoload/plug.vim',
+            \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim')
     autocmd VimEnter * PlugInstall
 endif
 " }}}
 
 call plug#begin()
+Plug expand('~/dotfiles/vimfiles')
 " colorschemes
-Plug 'chriskempson/base16-vim'
 Plug 'altercation/vim-colors-solarized'
+Plug 'chriskempson/base16-vim'
 Plug 'crusoexia/vim-monokai'
 Plug 'kabbamine/yowish.vim'
 Plug 'morhetz/gruvbox'
 " plugins
 Plug 'justinmk/vim-dirvish'
-"Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'rking/ag.vim'
-"Plug 'tikhomirov/vim-glsl'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
-Plug '$HOME/dotfiles/vimfiles'
 call plug#end()
 
 augroup filetypes
