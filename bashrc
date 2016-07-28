@@ -17,22 +17,20 @@ update_prompt_branch() {
   unset PROMPT_BRANCH
   local DIR=$PWD
   while [ -n "$DIR" ]; do
-      if [ -d "$DIR/.git" ]; then
-        PROMPT_BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
-        break
+    if [ -f "$DIR/.git/HEAD" ]; then
+      PROMPT_BRANCH=$(< "$DIR/.git/HEAD")
+      PROMPT_BRANCH=${PROMPT_BRANCH##*/}
+      git diff --no-ext-diff --quiet &> /dev/null || PROMPT_BRANCH+="*"
+      git diff --no-ext-diff --cached --quiet &> /dev/null || PROMPT_BRANCH+="+"
+      local TRACKING=($(git rev-list --left-right --count HEAD...@{u} 2> /dev/null))
+      if [ -n "${TRACKING}" ]; then
+        [[ ${TRACKING[0]} != 0 ]] && PROMPT_BRANCH+=" ⇡${TRACKING[0]}"
+        [[ ${TRACKING[1]} != 0 ]] && PROMPT_BRANCH+=" ⇣${TRACKING[1]}"
       fi
-      DIR=${DIR%/*}
-  done
-
-  if [ -n "${PROMPT_BRANCH}" ]; then
-    git diff --no-ext-diff --quiet || PROMPT_BRANCH+="${PROMPT_GIT_DIRTY:-*}"
-    git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH+="${PROMPT_GIT_STAGED:-+}"
-    local TRACKING=($(git rev-list --left-right --count HEAD...@{u} 2> /dev/null))
-    if [ -n "${TRACKING}" ]; then
-      [[ ${TRACKING[0]} != 0 ]] && PROMPT_BRANCH+=" ${PROMPT_GIT_AHEAD:-⇡}${TRACKING[0]}"
-      [[ ${TRACKING[1]} != 0 ]] && PROMPT_BRANCH+=" ${PROMPT_GIT_BEHIND:-⇣}${TRACKING[1]}"
+      break
     fi
-  fi
+    DIR=${DIR%/*}
+  done
 }
 
 PROMPT_COMMAND="update_prompt_branch; update_terminal_title"
