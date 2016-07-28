@@ -7,17 +7,19 @@ case $- in
 esac
 
 # local binaries
-export PATH="~/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 update_terminal_title() {
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
 }
 
+PROMPT_COMMAND="update_terminal_title"
+
 update_prompt_branch() {
   unset PROMPT_BRANCH
   local DIR=$PWD
   while [ -n "$DIR" ]; do
-    if [ -f "$DIR/.git/HEAD" ]; then
+    if [ -e "$DIR/.git/HEAD" ]; then
       PROMPT_BRANCH=$(< "$DIR/.git/HEAD")
       PROMPT_BRANCH=${PROMPT_BRANCH##*/}
       git diff --no-ext-diff --quiet &> /dev/null || PROMPT_BRANCH+="*"
@@ -33,23 +35,26 @@ update_prompt_branch() {
   done
 }
 
-PROMPT_COMMAND="update_prompt_branch; update_terminal_title"
+which git &> /dev/null && git config --get bash.prompt.disable &> /dev/null || PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_prompt_branch"
 
 RED="\[\e[31m\]"
 YELLOW="\[\e[33m\]"
 BLUE="\[\e[34m\]"
 CYAN="\[\e[36m\]"
+WHITE="\[\e[37m\]"
 GRAY="\[\e[90m\]"
 RESET="\[\e[0m\]"
 
 # show username@host if logged in through SSH
 [[ -v SSH_TTY ]] && PROMPT_HOST="${YELLOW}\u${GRAY}@\h"
 # show username@host if root, with username in white
-[[ $EUID == 0 ]] && PROMPT_HOST="${RED}\u${GRAY}@\h"
+[[ $EUID == 0 ]] && PROMPT_HOST="${WHITE}\u${GRAY}@\h"
+# show default prompt character on windows
+[[ -n "$MSYSTEM" ]] && PROMPT_CHARACTER="\$"
 # show current working directory, with $HOME abbreviated with a tilde
 PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${PROMPT_BRANCH:+ ${GRAY}\$PROMPT_BRANCH} "
 # show prompt symbol in red if previous command fails
-PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)❯${RESET} "
+PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)${PROMPT_CHARACTER:-❯}${RESET} "
 
 # colored grep and ls
 alias grep='grep --color=auto'
