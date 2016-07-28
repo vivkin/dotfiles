@@ -56,7 +56,7 @@ endif
 " }}}
 
 " download vim-plug {{{
-function s:download(filename, url)
+function! s:download(filename, url)
     if (executable('curl'))
         silent execute '!curl --fail --silent --location --create-dirs --output ' . a:filename . ' --url ' . a:url
         return v:shell_error == 0
@@ -85,7 +85,6 @@ Plug 'kabbamine/yowish.vim'
 Plug 'morhetz/gruvbox'
 " plugins
 Plug 'justinmk/vim-dirvish'
-Plug 'rking/ag.vim'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
@@ -115,7 +114,17 @@ command! A call alternatefile#open()
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 command! Colors call colorlist#open()
 command! -nargs=+ IncludePath call includepath#add('<args>')
+command! -nargs=* G silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
 command! -nargs=1 -complete=help H enew | setl buftype=help | execute 'help <args>' | setl buflisted
+
+" better grep
+if executable('ag')
+    let &grepprg='ag --vimgrep $*'
+    let &grepformat='%f:%l:%c:%m'
+else
+    let &grepprg='grep -r -n $* . /dev/null'
+    let &grepformat='%f:%l:%m'
+endif
 
 " disable annoying bells and flashes
 set belloff=all
@@ -213,15 +222,12 @@ nnoremap <D-[> <C-w>W
 nnoremap <D-]> <C-w>w
 nnoremap <silent> <C-n> :bnext<CR>
 nnoremap <silent> <C-p> :bprevious<CR>
-nnoremap <silent> <D-r> :make all run<CR>:botright cwindow<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
-nnoremap <silent> <Leader>G :Ag! -w <C-R><C-W><CR>
-nnoremap <silent> <Leader>g :Ag! -S <C-R><C-W><CR>
 nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nnoremap K i<CR><ESC>
-nnoremap Q :q!<CR>
-nnoremap X :bdelete<CR>
+nnoremap Q gq
+nnoremap ZX :bdelete<CR>
 
 " vim:set fdm=marker fdl=0:
