@@ -49,7 +49,7 @@ RESET="\[\e[0m\]"
 # show current working directory, with $HOME abbreviated with a tilde
 PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${PROMPT_BRANCH:+ ${GRAY}\$PROMPT_BRANCH} "
 # show prompt symbol in red if previous command fails
-PS1+="\$([ \${?} = 0 ] && echo -ne "${CYAN}" || echo -ne "${RED}")${PROMPT_SYMBOL:-❯}${RESET} "
+PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)❯${RESET} "
 
 # colored grep and ls
 alias grep='grep --color=auto'
