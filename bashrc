@@ -28,32 +28,30 @@ update_terminal_title() {
 }
 
 update_prompt_branch() {
-  local BRANCH
-  BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
-  if [ $? = 0 ]; then
-    git diff --no-ext-diff --quiet || BRANCH+="${PROMPT_GIT_DIRTY:-*}"
-    git diff --no-ext-diff --cached --quiet || BRANCH+="${PROMPT_GIT_STAGED:-+}"
-    local TRACKING
-    TRACKING=($(git rev-list --left-right --count HEAD...@{u} 2> /dev/null))
-    if [ $? = 0 ]; then
-      [[ ${TRACKING[0]} != 0 ]] && BRANCH+=" ${PROMPT_GIT_AHEAD:-⇡}${TRACKING[0]}"
-      [[ ${TRACKING[1]} != 0 ]] && BRANCH+=" ${PROMPT_GIT_BEHIND:-⇣}${TRACKING[1]}"
+  PROMPT_BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
+  if [ -n "${PROMPT_BRANCH}" ]; then
+    git diff --no-ext-diff --quiet || PROMPT_BRANCH+="${PROMPT_GIT_DIRTY:-*}"
+    git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH+="${PROMPT_GIT_STAGED:-+}"
+    local TRACKING=($(git rev-list --left-right --count HEAD...@{u} 2> /dev/null))
+    if [ -n "${TRACKING}" ]; then
+      [[ ${TRACKING[0]} != 0 ]] && PROMPT_BRANCH+=" ${PROMPT_GIT_AHEAD:-⇡}${TRACKING[0]}"
+      [[ ${TRACKING[1]} != 0 ]] && PROMPT_BRANCH+=" ${PROMPT_GIT_BEHIND:-⇣}${TRACKING[1]}"
     fi
   fi
-  PROMPT_BRANCH="${BRANCH}"
 }
 
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title; update_prompt_branch"
 
 # show username@host if logged in through SSH
-[[ -v SSH_TTY ]] && PROMPT_USERNAME="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
+[[ -v SSH_TTY ]] && PROMPT_HOST="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
 # show username@host if root, with username in white
-[[ $EUID == 0 ]] && PROMPT_USERNAME="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
-
-PS1="${PROMPT_USERNAME:+$PROMPT_USERNAME }"
-PS1+="\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]"
-PS1+="\${PROMPT_BRANCH:+ \[${COLOR_GRAY}\]\$PROMPT_BRANCH\[${COLOR_RESET}\]}"
-PS1+=" \$([ \${?} = 0 ] && echo \[\${COLOR_CYAN}\] || echo \[\${COLOR_RED}\])❯\[${COLOR_RESET}\] "
+[[ $EUID == 0 ]] && PROMPT_HOST="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
+# show current working directory, with $HOME abbreviated with a tilde
+PROMPT_CWD="\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]\${PROMPT_BRANCH:+ \[${COLOR_GRAY}\]\$PROMPT_BRANCH\[${COLOR_RESET}\]}"
+# show prompt symbol in red if previous command fails
+PROMPT_END="\$([ \${?} = 0 ] && echo \[\${COLOR_CYAN}\] || echo \[\${COLOR_RED}\])${PROMPT_SYMBOL:-❯}\[${COLOR_RESET}\]"
+# all together
+PS1="${PROMPT_HOST:+$PROMPT_HOST }${PROMPT_CWD} ${PROMPT_END} "
 
 # colored grep and ls
 alias grep='grep --color=auto'
