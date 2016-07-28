@@ -28,14 +28,19 @@ update_terminal_title() {
 }
 
 update_prompt_branch() {
-  PROMPT_BRANCH=$(git branch --no-color 2> /dev/null | sed -n -e '/^*/s/^* //p')
-  if [ -n "$PROMPT_BRANCH" ]; then
-    git diff --no-ext-diff --quiet || PROMPT_BRANCH+="*"
-    git diff --no-ext-diff --cached --quiet || PROMPT_BRANCH+="+"
-    local TRACKING=($(git rev-list --left-right --count HEAD...@'{u}'))
-    [[ ${TRACKING[0]} != 0 ]] && PROMPT_BRANCH+=" ↑${TRACKING[0]}"
-    [[ ${TRACKING[1]} != 0 ]] && PROMPT_BRANCH+=" ↓${TRACKING[1]}"
+  local BRANCH
+  BRANCH=$(git symbolic-ref --short HEAD 2> /dev/null)
+  if [ $? = 0 ]; then
+    git diff --no-ext-diff --quiet || BRANCH+="${PROMPT_GIT_DIRTY:-*}"
+    git diff --no-ext-diff --cached --quiet || BRANCH+="${PROMPT_GIT_STAGED:-+}"
+    local TRACKING
+    TRACKING=($(git rev-list --left-right --count HEAD...@{u} 2> /dev/null))
+    if [ $? = 0 ]; then
+      [[ ${TRACKING[0]} != 0 ]] && BRANCH+=" ${PROMPT_GIT_AHEAD:-⇡}${TRACKING[0]}"
+      [[ ${TRACKING[1]} != 0 ]] && BRANCH+=" ${PROMPT_GIT_BEHIND:-⇣}${TRACKING[1]}"
+    fi
   fi
+  PROMPT_BRANCH="${BRANCH}"
 }
 
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title; update_prompt_branch"
