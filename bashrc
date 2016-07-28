@@ -15,27 +15,34 @@ update_terminal_title() {
 
 PROMPT_COMMAND="update_terminal_title"
 
-update_prompt_branch() {
-  unset PROMPT_BRANCH
-  local DIR=$PWD
-  while [ -n "$DIR" ]; do
-    if [ -e "$DIR/.git/HEAD" ]; then
-      PROMPT_BRANCH=$(< "$DIR/.git/HEAD")
-      PROMPT_BRANCH=${PROMPT_BRANCH##*/}
-      git diff --no-ext-diff --quiet &> /dev/null || PROMPT_BRANCH+="*"
-      git diff --no-ext-diff --cached --quiet &> /dev/null || PROMPT_BRANCH+="+"
-      local TRACKING=($(git rev-list --left-right --count HEAD...@{u} 2> /dev/null))
-      if [ -n "${TRACKING}" ]; then
-        [[ ${TRACKING[0]} != 0 ]] && PROMPT_BRANCH+=" ⇡${TRACKING[0]}"
-        [[ ${TRACKING[1]} != 0 ]] && PROMPT_BRANCH+=" ⇣${TRACKING[1]}"
-      fi
-      break
-    fi
-    DIR=${DIR%/*}
+git_branch_init() {
+  GIT_UP_DIR=$PWD
+  while ! [ -d "$GIT_UP_DIR/.git" ] && [ -n "$GIT_UP_DIR" ]; do
+    GIT_UP_DIR=${GIT_UP_DIR%/*}
   done
+  GIT_BRANCH=
+  if [ -e "$GIT_UP_DIR/.git/HEAD" ]; then
+    GIT_BRANCH=$(< "$GIT_UP_DIR/.git/HEAD")
+    GIT_BRANCH=${GIT_BRANCH##*/}
+  fi
 }
 
-which git &> /dev/null && git config --get bash.prompt.disable &> /dev/null || PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_prompt_branch"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }git_branch_init"
+
+git_status_update() {
+  if [ -n "$GIT_BRANCH" ]; then
+    GIT_STATUS=
+    git diff --cached --quiet || GIT_STATUS+="+"
+    git diff --quiet || GIT_STATUS+="*"
+    read GIT_BRANCH_AHEAD GIT_BRANCH_BEHIND <<< $(git rev-list --left-right --count HEAD...@{u} 2> /dev/null)
+    [[ $GIT_BRANCH_AHEAD > 0 ]] && GIT_STATUS+=" ⇡$GIT_BRANCH_AHEAD"
+    [[ $GIT_BRANCH_BEHIND > 0 ]] && GIT_STATUS+=" ⇣$GIT_BRANCH_BEHIND"
+  fi
+}
+
+if which git &> /dev/null && ! git config --get bash.prompt.disable &> /dev/null; then
+  PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }git_status_update"
+fi
 
 RED="\[\e[31m\]"
 YELLOW="\[\e[33m\]"
@@ -52,7 +59,7 @@ RESET="\[\e[0m\]"
 # show default prompt character on windows
 [[ -n "$MSYSTEM" ]] && PROMPT_CHARACTER="\$"
 # show current working directory, with $HOME abbreviated with a tilde
-PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${PROMPT_BRANCH:+ ${GRAY}\$PROMPT_BRANCH} "
+PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${GIT_BRANCH:+ ${GRAY}\$GIT_BRANCH\$GIT_STATUS} "
 # show prompt symbol in red if previous command fails
 PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)${PROMPT_CHARACTER:-❯}${RESET} "
 
