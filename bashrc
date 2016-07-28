@@ -10,19 +10,6 @@ esac
 export PATH="~/.local/bin:$PATH"
 
 #colors
-COLOR_RED="$(tput setaf 1)"
-COLOR_GREEN="$(tput setaf 2)"
-COLOR_YELLOW="$(tput setaf 3)"
-COLOR_BLUE="$(tput setaf 4)"
-COLOR_MAGENTA="$(tput setaf 5)"
-COLOR_CYAN="$(tput setaf 6)"
-COLOR_WHITE="$(tput setaf 7)"
-COLOR_GRAY="$(tput setaf 8)"
-COLOR_BOLD="$(tput bold)"
-COLOR_UNDERLINE="$(tput sgr 0 1)"
-COLOR_INVERT="$(tput sgr 1 0)"
-COLOR_RESET="$(tput sgr0)"
-
 update_terminal_title() {
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
 }
@@ -42,14 +29,21 @@ update_prompt_branch() {
 
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title; update_prompt_branch"
 
+RED="\[\e[31m\]"
+YELLOW="\[\e[33m\]"
+BLUE="\[\e[34m\]"
+CYAN="\[\e[36m\]"
+GRAY="\[\e[90m\]"
+RESET="\[\e[39m\]"
+
 # show username@host if logged in through SSH
-[[ -v SSH_TTY ]] && PROMPT_HOST="\[${COLOR_YELLOW}\]\u\[${COLOR_GRAY}\]@\h"
+[[ -v SSH_TTY ]] && PROMPT_HOST="${YELLOW}\u${GRAY}@\h"
 # show username@host if root, with username in white
-[[ $EUID == 0 ]] && PROMPT_HOST="\[${COLOR_RED}\]\u\[${COLOR_GRAY}\]@\h"
+[[ $EUID == 0 ]] && PROMPT_HOST="${RED}\u${GRAY}@\h"
 # show current working directory, with $HOME abbreviated with a tilde
-PROMPT_CWD="\[${COLOR_BLUE}\]\w\[${COLOR_RESET}\]\${PROMPT_BRANCH:+ \[${COLOR_GRAY}\]\$PROMPT_BRANCH\[${COLOR_RESET}\]}"
+PROMPT_CWD="${BLUE}\w${RESET}\${PROMPT_BRANCH:+ ${GRAY}\$PROMPT_BRANCH${RESET}}"
 # show prompt symbol in red if previous command fails
-PROMPT_END="\$([ \${?} = 0 ] && echo \[\${COLOR_CYAN}\] || echo \[\${COLOR_RED}\])${PROMPT_SYMBOL:-❯}\[${COLOR_RESET}\]"
+PROMPT_END="\$([ \${?} = 0 ] && echo ${CYAN} || echo ${RED})${PROMPT_SYMBOL:-❯}${RESET}"
 # all together
 PS1="${PROMPT_HOST:+$PROMPT_HOST }${PROMPT_CWD} ${PROMPT_END} "
 
