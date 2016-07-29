@@ -63,9 +63,8 @@ endif
 " }}}
 
 " setup vim-plug {{{
-let g:plug_home = '$XDG_DATA_HOME/nvim/site'
-let s:plug_src = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-let s:plug_dst = g:plug_home . '/autoload/plug.vim'
+let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+let g:plug_home = expand('$XDG_DATA_HOME/nvim/site')
 
 function! s:download(filename, url)
     if (executable('curl'))
@@ -80,9 +79,10 @@ function! s:download(filename, url)
     endif
 endfunction
 
-if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download(s:plug_dst, s:plug_src)
+if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download(g:plug_home . '/autoload/plug.vim', s:plug_url)
     autocmd VimEnter * PlugInstall
 endif
+" }}}
 
 call plug#begin()
 " colorschemes
@@ -96,7 +96,6 @@ Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
-" }}}
 
 augroup filetypes
     autocmd!
@@ -165,7 +164,6 @@ set expandtab
 set smartindent
 set cinoptions=:0,l1,g0,N-s,(0
 
-set ttyfast
 set lazyredraw
 set cursorline
 set number
@@ -232,7 +230,6 @@ nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
 nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
 nnoremap K i<CR><ESC>
-nnoremap Q gq
-nnoremap ZX :bdelete<CR>
+nnoremap Q ZQ
 
 " vim:set fdm=marker fdl=0:
