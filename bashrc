@@ -6,6 +6,14 @@ case $- in
       *) return;;
 esac
 
+# xdg
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_DATA_HOME=$HOME/.local/share
+
+# vim
+export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/init.vim" | source $MYVIMRC'
+
 # local binaries
 export PATH="$HOME/.local/bin:$PATH"
 
