@@ -28,7 +28,6 @@ if !has('nvim')
     set runtimepath=$XDG_CONFIG_HOME/nvim,$XDG_DATA_HOME/nvim/site,$VIMRUNTIME,$XDG_DATA_HOME/nvim/site/after,$XDG_CONFIG_HOME/nvim/after
     set undodir=$XDG_DATA_HOME/nvim/undo
     set viewdir=$XDG_DATA_HOME/nvim/view
-    set viminfo+=n$XDG_CACHE_HOME/nvim/info
 
     filetype plugin indent on
     syntax enable
@@ -55,6 +54,7 @@ if !has('nvim')
     set tags=./tags;,tags
     set ttyfast
     set viminfo^=!
+    set viminfo+=n$XDG_CACHE_HOME/vim/info
     set wildmenu
 
     runtime! macros/matchit.vim
