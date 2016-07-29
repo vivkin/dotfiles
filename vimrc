@@ -52,6 +52,27 @@ if !has('nvim')
 
     runtime! macros/matchit.vim
     runtime! ftplugin/man.vim
+
+    if !empty($XDG_CACHE_HOME)
+        set viminfo+=n$XDG_CACHE_HOME/vim/info
+    endif
+
+    if !empty($XDG_CONFIG_HOME)
+        set runtimepath=$XDG_CONFIG_HOME/vim,$VIM,$VIMRUNTIME,$XDG_CONFIG_HOME/vim/after
+    endif
+
+    if !empty($XDG_DATA_HOME)
+        set backupdir=$XDG_DATA_HOME/vim/backup
+        set directory=$XDG_DATA_HOME/vim/swap//
+        set undodir=$XDG_DATA_HOME/vim/undo
+        set viewdir=$XDG_DATA_HOME/vim/view
+    endif
+
+    for dir in ['$XDG_CACHE_HOME/vim', '$XDG_DATA_HOME/vim/backup', '$XDG_DATA_HOME/vim/swap', '$XDG_DATA_HOME/vim/undo', '$XDG_DATA_HOME/vim/view']
+        if !isdirectory(expand(dir))
+            call mkdir(expand(dir), 'p')
+        endif
+    endfor
 endif
 " }}}
 
@@ -69,7 +90,7 @@ function! s:download(filename, url)
     endif
 endfunction
 
-if empty(globpath(&rtp, 'autoload/plug.vim')) && download(split(&rtp, ',')[0] . '/autoload/plug.vim',
+if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download(split(&rtp, ',')[0] . '/autoload/plug.vim',
             \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim')
     autocmd VimEnter * PlugInstall
 endif
@@ -93,6 +114,8 @@ augroup filetypes
     autocmd!
     autocmd FileType c,cpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType dirvish :sort r /[^\/]$/
+    autocmd FileType dirvish :keeppatterns g@\v/\.[^\/]+/?$@d
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType * setl formatoptions-=o
@@ -182,11 +205,6 @@ set noswapfile
 set nowritebackup
 
 set undofile
-set undodir=~/.vim/undo
-
-if !isdirectory(expand(&undodir))
-    call mkdir(expand(&undodir), 'p')
-endif
 
 if has("gui_running")
     set columns=160
