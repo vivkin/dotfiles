@@ -1,5 +1,5 @@
 " set <Leader> before loading any plugin
-let mapleader=','
+let mapleader = ','
 
 " don't load unused plugins {{{
 let g:loaded_2html_plugin = 1
@@ -23,6 +23,13 @@ endif
 
 " defaults from nvim {{{
 if !has('nvim')
+    set backupdir=$XDG_DATA_HOME/nvim/backup
+    set directory=$XDG_DATA_HOME/nvim/swap//
+    set runtimepath=$XDG_CONFIG_HOME/nvim,$XDG_DATA_HOME/nvim/site,$VIMRUNTIME,$XDG_DATA_HOME/nvim/site/after,$XDG_CONFIG_HOME/nvim/after
+    set undodir=$XDG_DATA_HOME/nvim/undo
+    set viewdir=$XDG_DATA_HOME/nvim/view
+    set viminfo+=n$XDG_CACHE_HOME/nvim/info
+
     filetype plugin indent on
     syntax enable
 
@@ -52,31 +59,14 @@ if !has('nvim')
 
     runtime! macros/matchit.vim
     runtime! ftplugin/man.vim
-
-    if !empty($XDG_CACHE_HOME)
-        set viminfo+=n$XDG_CACHE_HOME/vim/info
-    endif
-
-    if !empty($XDG_CONFIG_HOME)
-        set runtimepath=$XDG_CONFIG_HOME/vim,$VIM,$VIMRUNTIME,$XDG_CONFIG_HOME/vim/after
-    endif
-
-    if !empty($XDG_DATA_HOME)
-        set backupdir=$XDG_DATA_HOME/vim/backup
-        set directory=$XDG_DATA_HOME/vim/swap//
-        set undodir=$XDG_DATA_HOME/vim/undo
-        set viewdir=$XDG_DATA_HOME/vim/view
-    endif
-
-    for dir in ['$XDG_CACHE_HOME/vim', '$XDG_DATA_HOME/vim/backup', '$XDG_DATA_HOME/vim/swap', '$XDG_DATA_HOME/vim/undo', '$XDG_DATA_HOME/vim/view']
-        if !isdirectory(expand(dir))
-            call mkdir(expand(dir), 'p')
-        endif
-    endfor
 endif
 " }}}
 
-" download vim-plug {{{
+" setup vim-plug {{{
+let g:plug_home = '$XDG_DATA_HOME/nvim/site'
+let s:plug_src = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+let s:plug_dst = g:plug_home . '/autoload/plug.vim'
+
 function! s:download(filename, url)
     if (executable('curl'))
         silent execute '!curl --fail --silent --location --create-dirs --output ' . a:filename . ' --url ' . a:url
@@ -90,14 +80,11 @@ function! s:download(filename, url)
     endif
 endfunction
 
-if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download(split(&rtp, ',')[0] . '/autoload/plug.vim',
-            \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim')
+if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download(s:plug_dst, s:plug_src)
     autocmd VimEnter * PlugInstall
 endif
-" }}}
 
 call plug#begin()
-Plug expand('~/dotfiles/vimfiles')
 " colorschemes
 Plug 'altercation/vim-colors-solarized'
 Plug 'chriskempson/base16-vim'
@@ -109,6 +96,7 @@ Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
+" }}}
 
 augroup filetypes
     autocmd!
@@ -205,6 +193,9 @@ set noswapfile
 set nowritebackup
 
 set undofile
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), 'p')
+endif
 
 if has("gui_running")
     set columns=160
@@ -224,12 +215,8 @@ endif
 
 syntax on
 set synmaxcol=1024
-
-if filereadable(expand("~/.vimrc_background"))
-  let g:base16_shell_path='~/.config/base16-shell/scripts'
-  let base16colorspace=256
-  source ~/.vimrc_background
-endif
+set background=dark
+colorscheme gruvbox
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
