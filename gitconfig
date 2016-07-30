@@ -20,5 +20,5 @@
 	helper = osxkeychain
 [alias]
 	st = status --short --branch --untracked-files=no
-	di = diff
+	di = diff --color-words
 	lo = log --oneline --decorate
