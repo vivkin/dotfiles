@@ -11,6 +11,12 @@ set show-all-if-ambiguous on
 set show-all-if-unmodified on
 set visible-stats on
 
+set keymap vi-command
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\C-P": history-search-backward
+"\C-N": history-search-forward
+
 set keymap vi-insert
 "\e[A": history-search-backward
 "\e[B": history-search-forward
@@ -25,9 +31,3 @@ set keymap vi-insert
 "\M-B": backward-word
 "\M-F": forward-word
 "\C-K": kill-whole-line
-
-set keymap vi-command
-"\e[A": history-search-backward
-"\e[B": history-search-forward
-"\C-P": history-search-backward
-"\C-N": history-search-forward
