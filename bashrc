@@ -15,12 +15,17 @@ shopt -s dirspell
 shopt -s histappend
 shopt -s no_empty_cmd_completion
 
+# history
+HISTCONTROL=ignoreboth:erasedups
+HISTSIZE=10000
+PROMPT_COMMAND="history -a"
+
 # titile
 update_terminal_title() {
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
 }
 
-PROMPT_COMMAND="update_terminal_title"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title"
 
 # current branch
 git_branch_init() {
@@ -37,6 +42,7 @@ git_branch_init() {
 
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }git_branch_init"
 
+# staged, dirty and upstream tracking
 git_status_update() {
   if [ -n "$GIT_BRANCH" ]; then
     GIT_STATUS=
@@ -72,11 +78,6 @@ PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${GIT_BRANCH:+ ${GRAY}\$GIT_BRANCH\$
 # show prompt symbol in red if previous command fails
 PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)${PROMPT_CHARACTER:-❯}${RESET} "
 
-# history
-HISTCONTROL=ignoreboth:erasedups
-HISTSIZE=10000
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a"
-
 # colored grep and ls
 alias grep='grep --color=auto'
 if [ $(uname) = Darwin ]; then
@@ -87,6 +88,12 @@ fi
 alias l='ls -lh'
 alias la='ls -A'
 alias ll='ls -lA'
+
+# editor
+if which nvim &> /dev/null; then
+  alias vim=nvim
+  export EDITOR=nvim
+fi
 
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
