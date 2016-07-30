@@ -15,7 +15,7 @@ export ICEAUTHORITY="$XDG_RUNTIME_DIR/ICEauthority"
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 export LESSHISTFILE="$XDG_CACHE_HOME/less/history"
 export PYTHONDONTWRITEBYTECODE=1
-export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/init.vim" | source $MYVIMRC'
+export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/nvim/init.vim" | source $MYVIMRC'
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 
 # source bashrc
