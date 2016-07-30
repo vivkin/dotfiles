@@ -6,23 +6,23 @@ case $- in
       *) return;;
 esac
 
-# xdg
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
+# options
+shopt -s autocd
+shopt -s cdspell
+shopt -s checkwinsize
+shopt -s cmdhist
+shopt -s dirspell
+shopt -s histappend
+shopt -s no_empty_cmd_completion
 
-# vim
-export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/vim/init.vim" | source $MYVIMRC'
-
-# local binaries
-export PATH="$HOME/.local/bin:$PATH"
-
+# titile
 update_terminal_title() {
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
 }
 
 PROMPT_COMMAND="update_terminal_title"
 
+# current branch
 git_branch_init() {
   GIT_UP_DIR=$PWD
   while ! [ -d "$GIT_UP_DIR/.git" ] && [ -n "$GIT_UP_DIR" ]; do
@@ -52,6 +52,7 @@ if which git &> /dev/null && ! git config --get bash.prompt.disable &> /dev/null
   PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }git_status_update"
 fi
 
+# prompt
 RED="\[\e[31m\]"
 YELLOW="\[\e[33m\]"
 BLUE="\[\e[34m\]"
@@ -71,6 +72,11 @@ PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${GIT_BRANCH:+ ${GRAY}\$GIT_BRANCH\$
 # show prompt symbol in red if previous command fails
 PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)${PROMPT_CHARACTER:-❯}${RESET} "
 
+# history
+HISTCONTROL=ignoreboth:erasedups
+HISTSIZE=10000
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a"
+
 # colored grep and ls
 alias grep='grep --color=auto'
 if [ $(uname) = Darwin ]; then
@@ -82,17 +88,6 @@ alias l='ls -lh'
 alias la='ls -A'
 alias ll='ls -lA'
 
-# options
-shopt -s cdspell
-shopt -s cmdhist
-shopt -s histappend
-shopt -s no_empty_cmd_completion
-
-# history
-HISTCONTROL=ignoreboth:erasedups
-HISTSIZE=10000
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a"
-
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
   . $(brew --prefix)/share/bash-completion/bash_completion
@@ -101,6 +96,3 @@ elif [ -f /usr/share/bash-completion/bash_completion ]; then
 elif [ -f /etc/bash_completion ]; then
   . /etc/bash_completion
 fi
-
-BASE16_SHELL=$HOME/.config/base16-shell
-[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
