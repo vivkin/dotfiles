@@ -155,8 +155,6 @@ set showtabline=2
 set tabline=%!bufline#tabline()
 
 set clipboard=unnamed
-set display=uhex
-set history=10000
 
 set tabstop=4
 set shiftwidth=4
@@ -187,6 +185,7 @@ set wildmode=list:longest,full
 
 set autoread
 set autowrite
+set hidden
 set noswapfile
 set nowritebackup
 
@@ -213,8 +212,6 @@ endif
 
 syntax on
 set synmaxcol=1024
-set background=dark
-colorscheme gruvbox
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
