@@ -25,7 +25,10 @@ endif
 if !has('nvim')
     set backupdir=$XDG_DATA_HOME/nvim/backup
     set directory=$XDG_DATA_HOME/nvim/swap//
-    set runtimepath=$XDG_CONFIG_HOME/nvim,$XDG_DATA_HOME/nvim/site,$VIMRUNTIME,$XDG_DATA_HOME/nvim/site/after,$XDG_CONFIG_HOME/nvim/after
+    if !exists("g:runtimepath_changed")
+        set runtimepath=$XDG_CONFIG_HOME/nvim,$XDG_DATA_HOME/nvim/site,$VIMRUNTIME,$XDG_DATA_HOME/nvim/site/after,$XDG_CONFIG_HOME/nvim/after
+        let g:runtimepath_changed = 1
+    endif
     set undodir=$XDG_DATA_HOME/nvim/undo
     set viewdir=$XDG_DATA_HOME/nvim/view
 
@@ -64,7 +67,7 @@ endif
 
 " setup vim-plug {{{
 let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-let g:plug_home = expand('$XDG_DATA_HOME/nvim/site')
+let g:plug_home = expand('$XDG_DATA_HOME/nvim/site/plugged')
 
 function! s:download(filename, url)
     if (executable('curl'))
@@ -79,7 +82,7 @@ function! s:download(filename, url)
     endif
 endfunction
 
-if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download(g:plug_home . '/autoload/plug.vim', s:plug_url)
+if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download('$XDG_DATA_HOME/nvim/site/autoload/plug.vim', s:plug_url)
     autocmd VimEnter * PlugInstall
 endif
 " }}}
@@ -92,7 +95,9 @@ Plug 'crusoexia/vim-monokai'
 Plug 'kabbamine/yowish.vim'
 Plug 'morhetz/gruvbox'
 " plugins
+Plug 'junegunn/vim-peekaboo'
 Plug 'justinmk/vim-dirvish'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vivkin/cpp-vim'
 call plug#end()
@@ -101,7 +106,6 @@ augroup filetypes
     autocmd!
     autocmd FileType c,cpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-    autocmd FileType dirvish :sort r /[^\/]$/
     autocmd FileType dirvish :keeppatterns g@\v/\.[^\/]+/?$@d
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
@@ -141,7 +145,6 @@ set belloff=all
 
 " map russian for normal mode
 language C
-set encoding=utf-8
 set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
 set langnoremap
 
@@ -194,6 +197,8 @@ if !isdirectory(expand(&undodir))
     call mkdir(expand(&undodir), 'p')
 endif
 
+set synmaxcol=1024
+
 if has("gui_running")
     set columns=160
     set lines=48
@@ -208,24 +213,22 @@ if has("gui_running")
     elseif has("gui_macvim")
         set guifont=Cousine:h14,Office\ Code\ Pro:h13,Menlo:h13
     endif
-endif
 
-syntax on
-set synmaxcol=1024
+    colorscheme base16-harmonic16-light
+endif
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
 cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
 
 nnoremap <CR> :nohlsearch<CR><CR>
-nnoremap <D-[> <C-w>W
-nnoremap <D-]> <C-w>w
 nnoremap <silent> <C-n> :bnext<CR>
 nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
 nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
+nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
 
