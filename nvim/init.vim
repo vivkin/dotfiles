@@ -92,6 +92,7 @@ call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'chriskempson/base16-vim'
 Plug 'crusoexia/vim-monokai'
+Plug 'freeo/vim-kalisi'
 Plug 'kabbamine/yowish.vim'
 Plug 'morhetz/gruvbox'
 " plugins
@@ -106,7 +107,6 @@ augroup filetypes
     autocmd!
     autocmd FileType c,cpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-    autocmd FileType dirvish :keeppatterns g@\v/\.[^\/]+/?$@d
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType * setl formatoptions-=o
@@ -152,6 +152,7 @@ set langnoremap
 set laststatus=2
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
 set statusline+=%#WarningMsg#%{statusline#whitespace#warning()}%*
+"set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
 
 " tab line
 set showtabline=2
@@ -211,11 +212,12 @@ if has("gui_running")
     elseif has("gui_gtk")
         set guifont=DejaVu\ Sans\ Mono\ 12,Ubuntu\ Mono\ 12
     elseif has("gui_macvim")
-        set guifont=Cousine:h14,Office\ Code\ Pro:h13,Menlo:h13
+        set guifont=Cousine:h13,Menlo:h13
     endif
-
-    colorscheme base16-harmonic16-light
 endif
+
+set background=dark
+colorscheme kalisi
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
