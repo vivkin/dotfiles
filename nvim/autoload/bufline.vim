@@ -10,7 +10,7 @@ function! s:buflabel(num)
     else
         let name = pathshorten(fnamemodify(bufname(a:num), ':~:.'))
     endif
-    return a:num . ':' . name . (getbufvar(a:num, '&mod') ? '+' : '')
+    return a:num . ':' . (len(name) ? name : bufname(a:num)) . (getbufvar(a:num, '&mod') ? '+' : '')
 endfunction
 
 function! bufline#tabline()
@@ -38,7 +38,7 @@ function! bufline#tabline()
     if g:buflineoffset < right_start - width | let g:buflineoffset = right_start - width | endif
 
     let left = '%#LineNr#'. strpart(left, g:buflineoffset, left_end - g:buflineoffset)
-    let center = '%#CursorLineNr#' . center
+    let center = '%#TabLineSel#' . center
     let right = '%#LineNr#'. strpart(right, 0, g:buflineoffset + width - right_start)
 
     return left . center . right
