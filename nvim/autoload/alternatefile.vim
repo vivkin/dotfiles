@@ -1,10 +1,10 @@
 function! alternatefile#open()
     let extension = expand('%:e')
 
-    if match(extension, '\v\cc+[px]*') != -1
-        let extensions = ['.h', '.hpp', '.hxx']
-    elseif match(extension, '\v\ch+[px]*') != -1
-        let extensions = ['.c', '.cpp', '.cxx']
+    if match(extension, '\v\cc|cpp|cc|cxx|m|mm') != -1
+        let extensions = ['.h', '.hpp', '.hh', '.hxx']
+    elseif match(extension, '\v\ch|hpp|hh|hxx') != -1
+        let extensions = ['.c', '.cpp', '.cc', '.cxx', '.m', '.mm']
     endif
 
     if exists('extensions')

@@ -105,7 +105,7 @@ call plug#end()
 
 augroup filetypes
     autocmd!
-    autocmd FileType c,cpp setl formatprg=clang-format
+    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
