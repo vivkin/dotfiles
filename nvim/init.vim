@@ -89,18 +89,13 @@ endif
 
 call plug#begin()
 " colorschemes
-Plug 'altercation/vim-colors-solarized'
-Plug 'chriskempson/base16-vim'
-Plug 'crusoexia/vim-monokai'
 Plug 'freeo/vim-kalisi'
-Plug 'kabbamine/yowish.vim'
 Plug 'morhetz/gruvbox'
 " plugins
-Plug 'junegunn/vim-peekaboo'
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'vivkin/cpp-vim'
+Plug 'vim-jp/vim-cpp'
 call plug#end()
 
 augroup filetypes
@@ -122,6 +117,11 @@ augroup END
 augroup didyoumean
     autocmd!
     autocmd BufNewFile * call didyoumean#ask()
+augroup END
+
+augroup startup
+    autocmd!
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
 command! A call alternatefile#open()
@@ -222,6 +222,8 @@ colorscheme kalisi
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
 cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
+
+inoremap <C-u> <C-g>u<C-u>
 
 nnoremap <CR> :nohlsearch<CR><CR>
 nnoremap <silent> <C-n> :bnext<CR>
