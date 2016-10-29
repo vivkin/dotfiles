@@ -1,6 +1,4 @@
---add-metadata
 --external-downloader-args="-s 16 -x 16 -k 1M --enable-http-pipelining --file-allocation=none"
 --external-downloader=aria2c
 --no-overwrites
 --no-part
---write-info-json
