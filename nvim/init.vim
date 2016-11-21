@@ -42,7 +42,6 @@ if !has('nvim')
     set display=lastline
     set encoding=utf-8
     set formatoptions=tcqj
-    set history=10000
     set hlsearch
     set incsearch
     set langnoremap
@@ -58,6 +57,7 @@ if !has('nvim')
     set ttyfast
     set viminfo^=!
     set viminfo+=n$XDG_CACHE_HOME/vim/info
+    set history=10000
     set wildmenu
 
     runtime! macros/matchit.vim
@@ -91,6 +91,7 @@ call plug#begin()
 " colorschemes
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
+Plug 'rakr/vim-two-firewatch'
 " plugins
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-surround'
@@ -142,11 +143,6 @@ endif
 
 " disable annoying bells and flashes
 set belloff=all
-
-" map russian for normal mode
-language C
-set langmap=ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ;QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>,йцукенгшщзхъфывапролджэячсмитьбю;qwertyuiop[]asdfghjkl\\\;'zxcvbnm\\\,.
-set langnoremap
 
 " status line
 set laststatus=2
