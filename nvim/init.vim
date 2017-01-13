@@ -91,12 +91,10 @@ call plug#begin()
 " colorschemes
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
-Plug 'rakr/vim-two-firewatch'
 " plugins
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'vim-jp/vim-cpp'
 call plug#end()
 
 augroup filetypes
