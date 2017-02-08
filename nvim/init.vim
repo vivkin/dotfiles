@@ -89,9 +89,12 @@ endif
 
 call plug#begin()
 " colorschemes
+Plug 'rakr/vim-one'
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
 " plugins
+Plug 'majutsushi/tagbar'
+Plug 'skywind3000/asyncrun.vim'
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
@@ -104,7 +107,7 @@ augroup filetypes
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType * setl formatoptions-=o
-    autocmd BufReadPost */include/c++/* setf cpp
+    autocmd BufReadPost */include/c++/* setl ft=cpp
 augroup END
 
 augroup mappings
@@ -113,22 +116,121 @@ augroup mappings
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
 augroup END
 
-augroup didyoumean
-    autocmd!
-    autocmd BufNewFile * call didyoumean#ask()
-augroup END
-
 augroup startup
     autocmd!
+    " always jump to the last known cursor position
     autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
-command! A call alternatefile#open()
+augroup QuickfixStatus
+    autocmd!
+    autocmd BufWinEnter quickfix setlocal
+        \ statusline=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
+    autocmd User AsyncRunStart call asyncrun#quickfix_toggle(&lines / 3, 1)
+augroup END
+
+" switch between header/source {{{
+function! s:alternatefile_open()
+    let extension = expand('%:e')
+
+    if match(extension, '\v\cc|cpp|cc|cxx|m|mm') != -1
+        let extensions = ['.h', '.hpp', '.hh', '.hxx']
+    elseif match(extension, '\v\ch|hpp|hh|hxx') != -1
+        let extensions = ['.c', '.cpp', '.cc', '.cxx', '.m', '.mm']
+    endif
+
+    if exists('extensions')
+        let basename = expand("%:t:r")
+        for extension in extensions
+            let filename = findfile(basename . extension)
+            if filename != ''
+                if bufwinnr(filename) != -1
+                    silent execute bufwinnr(filename) . 'wincmd w'
+                elseif bufnr(filename) != -1
+                    silent execute 'buffer ' . bufnr(filename)
+                else
+                    silent execute 'edit ' . filename
+                endif
+                return 1
+            endif
+        endfor
+    endif
+
+    echohl WarningMsg | echo "No existing alternate available" | echohl None
+    return 0
+endfunction
+
+command! A call s:alternatefile_open()
+" }}}
+
+" show color scheme list {{{
+function! s:colorlist_open()
+    let l:bufname = '\[Color\ List]'
+
+    if bufwinnr(l:bufname) != -1
+        silent execute bufwinnr(l:bufname) . 'wincmd w'
+    else
+        silent execute '32 vnew' l:bufname
+
+        setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile cursorline
+        call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
+        setlocal nomodifiable
+
+        nnoremap <silent> <buffer> q :close<CR>
+
+        autocmd CursorMoved <buffer>
+                    \ if exists('g:colors_name') && g:colors_name != getline('.') |
+                    \   try | execute 'colorscheme ' . getline('.') | finally | endtry |
+                    \ endif
+    endif
+
+    if exists('g:colors_name')
+        call search('^\<' . g:colors_name . '\>$')
+    endif
+endfunction
+
+command! Colors call s:colorlist_open()
+" }}}
+
+" ask which file to open {{{
+function! s:didyoumean_ask()
+    let filename = expand("%")
+    if filereadable(filename) | return | endif
+
+    let filenames = glob(filename . '*', 1, 1)
+    if empty(filenames) | return | endif
+
+    let nr = inputlist(['Did you mean:'] + map(range(len(filenames)), 'v:val + 1 . ". " . filenames[v:val]'))
+    if nr >= 1 && nr <= len(filenames)
+        silent execute 'bwipeout'
+        silent execute 'edit ' . filenames[nr - 1]
+        filetype detect
+    endif
+endfunction
+
+augroup didyoumean
+    autocmd!
+    autocmd BufNewFile * call s:didyoumean_ask()
+augroup END
+" }}}
+
+" add compiler include path {{{
+function! s:includepath_add(cc)
+    let l:output = system(a:cc . " -x c++ -v -E - < /dev/null 2>&1 | sed -e '1,/#include <...> search starts here:/d;/End of search list./,$d;' -e 's/^\ *//;s/\ *(framework directory)$//'")
+    for line in split(l:output)
+        silent execute 'set path+=' . line
+    endfor
+endfunction
+
+command! -nargs=+ IncludePath call s:includepath_add('<args>')
+" }}}
+
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! Colors call colorlist#open()
-command! -nargs=+ IncludePath call includepath#add('<args>')
 command! -nargs=* G silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
 command! -nargs=1 -complete=help H enew | setl buftype=help | execute 'help <args>' | setl buflisted
+command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
+" see the difference between the current buffer and the file it was loaded from
+command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis
 
 " better grep
 if executable('ag')
@@ -142,15 +244,82 @@ endif
 " disable annoying bells and flashes
 set belloff=all
 
-" status line
+" status line {{{
+function! _statusline_whitespace_warning()
+    if &readonly || !&modifiable || &buftype != ''
+        return ''
+    endif
+    if !exists('b:statusline_warning')
+        let l:mixed = search('\v(^\t+ +)|(^ +\t+)', 'nw')
+        let l:trailing = search('\v\s$', 'nw')
+        let b:statusline_warning = ''
+        if l:mixed | let b:statusline_warning .= ' mixed-indent:' . l:mixed . ' ' | endif
+        if l:trailing | let b:statusline_warning .= ' trailing-space:' .  l:trailing . ' ' | endif
+    endif
+    return b:statusline_warning
+endfunction
+
+augroup _statusline_whitespace
+    autocmd!
+    autocmd BufWritePost,CursorHold * unlet! b:statusline_warning
+augroup END
+
 set laststatus=2
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
-set statusline+=%#WarningMsg#%{statusline#whitespace#warning()}%*
+set statusline+=%#WarningMsg#%{_statusline_whitespace_warning()}%*
 "set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
+"}}}
 
-" tab line
+" tab line {{{
+let g:buflineoffset = 0
+
+function! s:buflabel(num)
+    if empty(bufname(a:num))
+        if getbufvar(a:num, '&buftype') == 'quickfix'
+            let name = 'Quickfix List'
+        else
+            let name = 'No Name'
+        endif
+    else
+        let name = pathshorten(fnamemodify(bufname(a:num), ':~:.'))
+    endif
+    return a:num . ':' . (len(name) ? name : bufname(a:num)) . (getbufvar(a:num, '&mod') ? '+' : '')
+endfunction
+
+function! _bufline_tabline()
+    let width = &columns
+    let active = bufnr('%')
+
+    let center = ''
+    if buflisted(active)
+        let center = '[' . s:buflabel(active) . ']'
+    endif
+
+    let left = ''
+    for i in filter(range(1, active - 1), 'buflisted(v:val)')
+        let left .= ' ' . s:buflabel(i) . ' '
+    endfor
+
+    let right = ''
+    for i in filter(range(active + 1, bufnr('$')), 'buflisted(v:val)')
+        let right .= ' ' . s:buflabel(i) . ' '
+    endfor
+
+    let left_end = strwidth(left)
+    if g:buflineoffset > left_end | let g:buflineoffset = left_end | endif
+    let right_start = left_end + strwidth(center)
+    if g:buflineoffset < right_start - width | let g:buflineoffset = right_start - width | endif
+
+    let left = '%#LineNr#'. strpart(left, g:buflineoffset, left_end - g:buflineoffset)
+    let center = '%#TabLineSel#' . center
+    let right = '%#LineNr#'. strpart(right, 0, g:buflineoffset + width - right_start)
+
+    return left . center . right
+endfunction
+
 set showtabline=2
-set tabline=%!bufline#tabline()
+set tabline=%!_bufline_tabline()
+" }}}
 
 set clipboard=unnamed
 
