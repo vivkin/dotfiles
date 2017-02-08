@@ -18,7 +18,7 @@ shopt -s no_empty_cmd_completion
 # history
 HISTCONTROL=ignoreboth:erasedups
 HISTSIZE=10000
-PROMPT_COMMAND="history -a"
+PROMPT_COMMAND="history -a;history -n"
 
 # titile
 update_terminal_title() {
