@@ -222,7 +222,7 @@ function! s:includepath_add(cc)
     endfor
 endfunction
 
-command! -nargs=+ IncludePath call s:includepath_add('<args>')
+command! -nargs=+ -complete=shellcmd IncludePath call s:includepath_add('<args>')
 " }}}
 
 command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
