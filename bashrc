@@ -86,8 +86,12 @@ else
   alias ls='ls --color=auto -F'
 fi
 alias l='ls -lh'
-alias la='ls -A'
 alias ll='ls -lA'
+
+# shorter change dir
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
 
 # editor
 if which nvim &> /dev/null; then
