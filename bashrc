@@ -68,7 +68,7 @@ GRAY="\[\e[90m\]"
 RESET="\[\e[0m\]"
 
 # show username@host if logged in through SSH
-[[ -v SSH_TTY ]] && PROMPT_HOST="${YELLOW}\u${GRAY}@\h"
+[[ -n "$SSH_TTY" ]] && PROMPT_HOST="${YELLOW}\u${GRAY}@\h"
 # show username@host if root, with username in white
 [[ $EUID == 0 ]] && PROMPT_HOST="${WHITE}\u${GRAY}@\h"
 # show default prompt character on windows

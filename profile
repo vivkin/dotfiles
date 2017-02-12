@@ -3,17 +3,16 @@
 # local binaries
 export PATH="$HOME/.local/bin:$PATH"
 
-# xdg
-export XDG_CACHE_HOME=$HOME/.cache
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
-
 # environment
-export HISTFILE="$XDG_CACHE_HOME/bash/history"
-export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
-export LESSHISTFILE="$XDG_CACHE_HOME/less/history"
+export HISTFILE="$HOME/.cache/bash/history"
+export INPUTRC="$HOME/.config/readline/inputrc"
+export LESSHISTFILE="$HOME/.cache/less/history"
 export PYTHONDONTWRITEBYTECODE=1
-export VIMINIT='let $MYVIMRC="$XDG_CONFIG_HOME/nvim/init.vim" | source $MYVIMRC'
+export VIMINIT='let $MYVIMRC="$HOME/.config/nvim/init.vim" | source $MYVIMRC'
+
+# make dirs for history
+[[ -d "${HISTFILE%/*}" ]] || mkdir -p "${HISTFILE%/*}"
+[[ -d "${LESSHISTFILE%/*}" ]] || mkdir -p "${LESSHISTFILE%/*}"
 
 # source bashrc
-[[ -v BASH ]] && . "$XDG_CONFIG_HOME/bashrc"
+[[ -n "$BASH_VERSION" ]] && . "$HOME/.config/bashrc"
