@@ -57,7 +57,7 @@ Plug 'tpope/vim-unimpaired'
 call plug#end()
 " }}}
 
-augroup filetypes
+augroup startup
     autocmd!
     autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
     autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
@@ -65,25 +65,11 @@ augroup filetypes
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType * setl formatoptions-=o
     autocmd BufReadPost */include/c++/* setl ft=cpp
-augroup END
-
-augroup mappings
-    autocmd!
-    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
-    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
-augroup END
-
-augroup startup
-    autocmd!
     " always jump to the last known cursor position
     autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-augroup END
-
-augroup QuickfixStatus
-    autocmd!
-    autocmd BufWinEnter quickfix setlocal
-        \ statusline=%t\ [%{g:asyncrun_status}]\ %{exists('w:quickfix_title')?\ '\ '.w:quickfix_title\ :\ ''}\ %=%-15(%l,%c%V%)\ %P
-    autocmd User AsyncRunStart call asyncrun#quickfix_toggle(&lines / 3, 1)
+    " close command window, help and quick fix by q
+    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
 augroup END
 
 " switch between header/source {{{
@@ -165,10 +151,7 @@ function! s:didyoumean_ask()
     endif
 endfunction
 
-augroup didyoumean
-    autocmd!
-    autocmd BufNewFile * call s:didyoumean_ask()
-augroup END
+autocmd startup BufNewFile * call s:didyoumean_ask()
 " }}}
 
 " add compiler include path {{{
@@ -213,10 +196,7 @@ function! init#statusline_whitespace_warning()
     return b:statusline_warning
 endfunction
 
-augroup statusline_whitespace
-    autocmd!
-    autocmd BufWritePost,CursorHold * unlet! b:statusline_warning
-augroup END
+autocmd startup BufWritePost,CursorHold * unlet! b:statusline_warning
 "}}}
 
 " tab line {{{
@@ -375,7 +355,7 @@ nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
 nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
-nnoremap <silent> <Leader>x :bdelete<CR>
+nnoremap <silent> <Leader>x :bdelete<C>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
 
