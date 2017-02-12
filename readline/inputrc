@@ -13,20 +13,20 @@ set show-all-if-unmodified on
 set visible-stats on
 
 set keymap vi-command
-"\C-n": history-search-forward
-"\C-p": history-search-backward
+"\C-N": history-search-forward
+"\C-P": history-search-backward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 
 set keymap vi-insert
-"\C-n": history-search-forward
-"\C-p": history-search-backward
+"\C-N": history-search-forward
+"\C-P": history-search-backward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 
-"\C-a": beginning-of-line
-"\C-b": backward-char
-"\C-e": end-of-line
-"\C-f": forward-char
-"\C-i": menu-complete
-"\C-k": kill-whole-line
+"\C-A": beginning-of-line
+"\C-B": backward-char
+"\C-E": end-of-line
+"\C-F": forward-char
+"\C-I": menu-complete
+"\C-K": kill-whole-line
