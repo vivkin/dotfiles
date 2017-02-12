@@ -4,6 +4,7 @@
 export PATH="$HOME/.local/bin:$PATH"
 
 # environment
+export EDITOR=vim
 export HISTFILE="$HOME/.cache/bash/history"
 export INPUTRC="$HOME/.config/readline/inputrc"
 export LESSHISTFILE="$HOME/.cache/less/history"

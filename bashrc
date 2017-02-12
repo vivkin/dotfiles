@@ -93,12 +93,6 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-# editor
-if which nvim &> /dev/null; then
-  alias vim=nvim
-  export EDITOR=nvim
-fi
-
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
   . $(brew --prefix)/share/bash-completion/bash_completion

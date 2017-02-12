@@ -262,7 +262,7 @@ set nostartofline
 set noswapfile
 set nowrap
 set nowritebackup
-if has("patch-7.4.806")
+if has("patch-7.4.1027")
     set nrformats=bin,hex
 endif
 set number
