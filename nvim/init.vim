@@ -21,73 +21,29 @@ if has("gui_macvim")
 endif
 " }}}
 
-" defaults from nvim {{{
-if !has('nvim')
-    set backupdir=$XDG_DATA_HOME/nvim/backup
-    set directory=$XDG_DATA_HOME/nvim/swap//
-    if !exists("g:runtimepath_changed")
-        set runtimepath=$XDG_CONFIG_HOME/nvim,$XDG_DATA_HOME/nvim/site,$VIMRUNTIME,$XDG_DATA_HOME/nvim/site/after,$XDG_CONFIG_HOME/nvim/after
-        let g:runtimepath_changed = 1
-    endif
-    set undodir=$XDG_DATA_HOME/nvim/undo
-    set viewdir=$XDG_DATA_HOME/nvim/view
-
-    filetype plugin indent on
-    syntax enable
-
-    set autoindent
-    set autoread
-    set backspace=indent,eol,start
-    set complete-=i
-    set display=lastline
-    set encoding=utf-8
-    set formatoptions=tcqj
-    set hlsearch
-    set incsearch
-    set langnoremap
-    set laststatus=2
-    set listchars=tab:>\ ,trail:-,nbsp:+
-    set mouse=a
-    set nocompatible
-    set nrformats=bin,hex
-    set sessionoptions-=options
-    set smarttab
-    set tabpagemax=50
-    set tags=./tags;,tags
-    set ttyfast
-    set viminfo^=!
-    set viminfo+=n$XDG_CACHE_HOME/vim/info
-    set history=10000
-    set wildmenu
-
-    runtime! macros/matchit.vim
-    runtime! ftplugin/man.vim
-endif
-" }}}
-
 " setup vim-plug {{{
-let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-let g:plug_home = expand('$XDG_DATA_HOME/nvim/site/plugged')
+if empty(globpath(&rtp, 'autoload/plug.vim'))
+    let s:plug_filename = expand('~/.vim/autoload/plug.vim')
+    let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-function! s:download(filename, url)
-    if (executable('curl'))
-        silent execute '!curl --fail --silent --location --create-dirs --output ' . a:filename . ' --url ' . a:url
-        return v:shell_error == 0
-    elseif (executable('wget'))
-        silent execute 'mkdir -p ' . fnamemodify(a:filename, ':h') . ' && wget --quiet --output-document ' . a:filename . ' ' . a:url
-        return v:shell_error == 0
-    else
-        echoerr 'curl or wget not found'
-        return 0
+    if !isdirectory(fnamemodify(s:plug_filename, ':h'))
+        call mkdir(fnamemodify(s:plug_filename, ':h'), 'p')
     endif
-endfunction
 
-if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download('$XDG_DATA_HOME/nvim/site/autoload/plug.vim', s:plug_url)
-    autocmd VimEnter * PlugInstall
+    if (executable('curl'))
+        silent execute '!curl --fail --silent --location --output ' . s:plug_filename . ' --url ' . s:plug_url
+    elseif (executable('wget'))
+        silent execute '!wget --quiet --output-document ' . s:plug_filename . ' ' . s:plug_url
+    elseif (executable('python'))
+        silent execute '!python -c "import urllib;urllib.urlretrieve(\"' . s:plug_url . '\", \"' . s:plug_filename . '\")'
+    endif
+
+    if v:shell_error == 0 && filereadable(s:plug_filename)
+        autocmd VimEnter * PlugInstall
+    endif
 endif
-" }}}
 
-call plug#begin()
+call plug#begin('~/.vim/plugged')
 " colorschemes
 Plug 'rakr/vim-one'
 Plug 'freeo/vim-kalisi'
@@ -99,6 +55,7 @@ Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 call plug#end()
+" }}}
 
 augroup filetypes
     autocmd!
@@ -241,11 +198,8 @@ else
     let &grepformat='%f:%l:%m'
 endif
 
-" disable annoying bells and flashes
-set belloff=all
-
 " status line {{{
-function! _statusline_whitespace_warning()
+function! init#statusline_whitespace_warning()
     if &readonly || !&modifiable || &buftype != ''
         return ''
     endif
@@ -259,15 +213,10 @@ function! _statusline_whitespace_warning()
     return b:statusline_warning
 endfunction
 
-augroup _statusline_whitespace
+augroup statusline_whitespace
     autocmd!
     autocmd BufWritePost,CursorHold * unlet! b:statusline_warning
 augroup END
-
-set laststatus=2
-set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
-set statusline+=%#WarningMsg#%{_statusline_whitespace_warning()}%*
-"set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
 "}}}
 
 " tab line {{{
@@ -286,7 +235,7 @@ function! s:buflabel(num)
     return a:num . ':' . (len(name) ? name : bufname(a:num)) . (getbufvar(a:num, '&mod') ? '+' : '')
 endfunction
 
-function! _bufline_tabline()
+function! init#bufline_tabline()
     let width = &columns
     let active = bufnr('%')
 
@@ -316,52 +265,83 @@ function! _bufline_tabline()
 
     return left . center . right
 endfunction
-
-set showtabline=2
-set tabline=%!_bufline_tabline()
 " }}}
 
-set clipboard=unnamed
+filetype plugin indent on
+syntax enable
 
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set smartindent
+runtime! macros/matchit.vim
+runtime! ftplugin/man.vim
+
+set autoindent
+set autoread
+set autoread
+set autowrite
+set backspace=indent,eol,start
+if has("patch-7.4.793")
+    set belloff=all
+endif
 set cinoptions=:0,l1,g0,N-s,(0
-
-set lazyredraw
+set clipboard=unnamed
+set complete-=i
 set cursorline
-set number
-set showcmd
+set display=lastline
+set encoding=utf-8
+set expandtab
+set formatoptions=tcqj
+set gdefault
+set hidden
+set history=10000
+set hlsearch
+set ignorecase
+set incsearch
+set langnoremap
+set laststatus=2
+set lazyredraw
 set listchars=tab:↹␠,trail:·,eol:␤
 set matchpairs+=<:>
-
-set nowrap
+set mouse=a
+set nocompatible
 set nostartofline
+set noswapfile
+set nowrap
+set nowritebackup
+if has("patch-7.4.806")
+    set nrformats=bin,hex
+endif
+set number
 set scrolloff=1
+set sessionoptions-=options
+set shiftwidth=4
+set showcmd
+set showtabline=2
 set sidescrolloff=8
-
-set gdefault
-set hlsearch
-set incsearch
-set ignorecase
 set smartcase
-
+set smartindent
+set smarttab
+set statusline+=%#WarningMsg#%{init#statusline_whitespace_warning()}%*
+set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+"set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
+set synmaxcol=1024
+set tabline=%!init#bufline_tabline()
+set tabpagemax=50
+set tabstop=4
+set tags=./tags;,tags
+set ttyfast
+set undodir=~/.vim/undo
+set undofile
+set viewdir=~/.vim/view
+if !has('nvim')
+    set viminfo=!,'100,<50,s10,h,n~/.vim/info
+endif
 set wildmenu
 set wildmode=list:longest,full
 
-set autoread
-set autowrite
-set hidden
-set noswapfile
-set nowritebackup
-
-set undofile
-if !isdirectory(expand(&undodir))
-    call mkdir(expand(&undodir), 'p')
-endif
-
-set synmaxcol=1024
+for path in [&undodir, &viewdir]
+    if !isdirectory(expand(path))
+        call mkdir(expand(path), 'p')
+    endif
+endfor
 
 if has("gui_running")
     set columns=160
