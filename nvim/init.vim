@@ -28,7 +28,7 @@ augroup END
 " }}}
 
 " setup vim-plug {{{
-let g:plug_home = '~/.vim/plugged'
+let g:plug_home = expand('~/.vim/plugged')
 let g:plug_url_format = 'https://github.com/%s'
 
 if empty(globpath(&rtp, 'autoload/plug.vim'))
@@ -39,12 +39,12 @@ if empty(globpath(&rtp, 'autoload/plug.vim'))
         call mkdir(fnamemodify(s:plug_filename, ':h'), 'p')
     endif
 
-    if (executable('curl'))
+    if (executable('python'))
+        execute '!python -c "import urllib;urllib.urlretrieve(\"' . s:plug_url . '\", \"' . s:plug_filename . '\")"'
+    elseif (executable('curl'))
         execute '!curl --fail --silent --location --output ' . s:plug_filename . ' --url ' . s:plug_url
     elseif (executable('wget'))
         execute '!wget --quiet --output-document ' . s:plug_filename . ' ' . s:plug_url
-    elseif (executable('python'))
-        execute '!python -c "import urllib;urllib.urlretrieve(\"' . s:plug_url . '\", \"' . s:plug_filename . '\")'
     endif
 
     if v:shell_error == 0 && filereadable(s:plug_filename)
