@@ -28,8 +28,11 @@ augroup END
 " }}}
 
 " setup vim-plug {{{
+let g:plug_home = '~/.vim/plugged'
+let g:plug_url_format = 'https://github.com/%s'
+
 if empty(globpath(&rtp, 'autoload/plug.vim'))
-    let s:plug_filename = expand('~/.vim/autoload/plug.vim')
+    let s:plug_filename = expand(has('nvim') ? '~/.local/share/nvim/site/autoload/plug.vim' : '~/.vim/autoload/plug.vim')
     let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
     if !isdirectory(fnamemodify(s:plug_filename, ':h'))
@@ -37,30 +40,17 @@ if empty(globpath(&rtp, 'autoload/plug.vim'))
     endif
 
     if (executable('curl'))
-        silent execute '!curl --fail --silent --location --output ' . s:plug_filename . ' --url ' . s:plug_url
+        execute '!curl --fail --silent --location --output ' . s:plug_filename . ' --url ' . s:plug_url
     elseif (executable('wget'))
-        silent execute '!wget --quiet --output-document ' . s:plug_filename . ' ' . s:plug_url
+        execute '!wget --quiet --output-document ' . s:plug_filename . ' ' . s:plug_url
     elseif (executable('python'))
-        silent execute '!python -c "import urllib;urllib.urlretrieve(\"' . s:plug_url . '\", \"' . s:plug_filename . '\")'
+        execute '!python -c "import urllib;urllib.urlretrieve(\"' . s:plug_url . '\", \"' . s:plug_filename . '\")'
     endif
 
     if v:shell_error == 0 && filereadable(s:plug_filename)
         autocmd startup VimEnter * PlugInstall
     endif
 endif
-
-call plug#begin('~/.vim/plugged')
-" colorschemes
-Plug 'rakr/vim-one'
-Plug 'freeo/vim-kalisi'
-Plug 'morhetz/gruvbox'
-" plugins
-Plug 'majutsushi/tagbar'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'justinmk/vim-dirvish'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-call plug#end()
 " }}}
 
 " switch between header/source {{{
@@ -224,6 +214,19 @@ function! _bufline_tabline()
 endfunction
 " }}}
 
+call plug#begin()
+" colorschemes
+Plug 'rakr/vim-one'
+Plug 'freeo/vim-kalisi'
+Plug 'morhetz/gruvbox'
+" plugins
+Plug 'majutsushi/tagbar'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'justinmk/vim-dirvish'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+call plug#end()
+
 filetype plugin indent on
 syntax enable
 
@@ -289,11 +292,9 @@ endif
 set wildmenu
 set wildmode=list:longest,full
 
-for path in [&undodir, &viewdir]
-    if !isdirectory(expand(path))
-        call mkdir(expand(path), 'p')
-    endif
-endfor
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), 'p')
+endif
 
 if has("gui_running")
     set columns=160
@@ -317,25 +318,6 @@ colorscheme kalisi
 runtime! macros/matchit.vim
 runtime! ftplugin/man.vim
 
-command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! -nargs=* Grep silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
-command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
-
-augroup startup
-    autocmd!
-    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
-    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-    autocmd FileType make setl noexpandtab
-    autocmd FileType markdown setl wrap linebreak
-    autocmd FileType * setl formatoptions-=o
-    autocmd BufReadPost */include/c++/* setl ft=cpp
-    " always jump to the last known cursor position
-    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-    " close command window, help and quick fix by q
-    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
-    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
-augroup END
-
 " better grep
 if executable('ag')
     let &grepprg='ag --vimgrep $*'
@@ -344,6 +326,22 @@ else
     let &grepprg='grep -r -n $* . /dev/null'
     let &grepformat='%f:%l:%m'
 endif
+
+command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
+command! -nargs=* Grep silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
+command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
+
+augroup startup
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+    autocmd BufReadPost */include/c++/* setl ft=cpp
+    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType * setl formatoptions-=o
+    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
+    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType make setl noexpandtab
+    autocmd FileType markdown setl wrap linebreak
+augroup END
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
