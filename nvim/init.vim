@@ -313,7 +313,7 @@ if has("gui_running")
 endif
 
 set background=dark
-colorscheme kalisi
+silent! colorscheme kalisi
 
 runtime! macros/matchit.vim
 runtime! ftplugin/man.vim
