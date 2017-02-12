@@ -21,178 +21,280 @@ if has("gui_macvim")
 endif
 " }}}
 
-" defaults from nvim {{{
-if !has('nvim')
-    set backupdir=$XDG_DATA_HOME/nvim/backup
-    set directory=$XDG_DATA_HOME/nvim/swap//
-    if !exists("g:runtimepath_changed")
-        set runtimepath=$XDG_CONFIG_HOME/nvim,$XDG_DATA_HOME/nvim/site,$VIMRUNTIME,$XDG_DATA_HOME/nvim/site/after,$XDG_CONFIG_HOME/nvim/after
-        let g:runtimepath_changed = 1
-    endif
-    set undodir=$XDG_DATA_HOME/nvim/undo
-    set viewdir=$XDG_DATA_HOME/nvim/view
-
-    filetype plugin indent on
-    syntax enable
-
-    set autoindent
-    set autoread
-    set backspace=indent,eol,start
-    set complete-=i
-    set display=lastline
-    set encoding=utf-8
-    set formatoptions=tcqj
-    set hlsearch
-    set incsearch
-    set langnoremap
-    set laststatus=2
-    set listchars=tab:>\ ,trail:-,nbsp:+
-    set mouse=a
-    set nocompatible
-    set nrformats=bin,hex
-    set sessionoptions-=options
-    set smarttab
-    set tabpagemax=50
-    set tags=./tags;,tags
-    set ttyfast
-    set viminfo^=!
-    set viminfo+=n$XDG_CACHE_HOME/vim/info
-    set history=10000
-    set wildmenu
-
-    runtime! macros/matchit.vim
-    runtime! ftplugin/man.vim
-endif
+" remove all vimrc auto commands {{{
+augroup startup
+    autocmd!
+augroup END
 " }}}
 
 " setup vim-plug {{{
-let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-let g:plug_home = expand('$XDG_DATA_HOME/nvim/site/plugged')
+let g:plug_home = expand('~/.vim/plugged')
+let g:plug_url_format = 'https://github.com/%s'
 
-function! s:download(filename, url)
-    if (executable('curl'))
-        silent execute '!curl --fail --silent --location --create-dirs --output ' . a:filename . ' --url ' . a:url
-        return v:shell_error == 0
+if empty(globpath(&rtp, 'autoload/plug.vim'))
+    let s:plug_filename = expand(has('nvim') ? '~/.local/share/nvim/site/autoload/plug.vim' : '~/.vim/autoload/plug.vim')
+    let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+    if !isdirectory(fnamemodify(s:plug_filename, ':h'))
+        call mkdir(fnamemodify(s:plug_filename, ':h'), 'p')
+    endif
+
+    if (executable('python'))
+        execute '!python -c "import urllib;urllib.urlretrieve(\"' . s:plug_url . '\", \"' . s:plug_filename . '\")"'
+    elseif (executable('curl'))
+        execute '!curl --fail --silent --location --output ' . s:plug_filename . ' --url ' . s:plug_url
     elseif (executable('wget'))
-        silent execute 'mkdir -p ' . fnamemodify(a:filename, ':h') . ' && wget --quiet --output-document ' . a:filename . ' ' . a:url
-        return v:shell_error == 0
+        execute '!wget --quiet --output-document ' . s:plug_filename . ' ' . s:plug_url
+    endif
+
+    if v:shell_error == 0 && filereadable(s:plug_filename)
+        autocmd startup VimEnter * PlugInstall
+    endif
+endif
+" }}}
+
+" switch between header/source {{{
+function! s:alternatefile_open()
+    let extension = expand('%:e')
+
+    if match(extension, '\v\cc|cpp|cc|cxx|m|mm') != -1
+        let extensions = ['.h', '.hpp', '.hh', '.hxx']
+    elseif match(extension, '\v\ch|hpp|hh|hxx') != -1
+        let extensions = ['.c', '.cpp', '.cc', '.cxx', '.m', '.mm']
+    endif
+
+    if exists('extensions')
+        let basename = expand("%:t:r")
+        for extension in extensions
+            let filename = findfile(basename . extension)
+            if filename != ''
+                if bufwinnr(filename) != -1
+                    silent execute bufwinnr(filename) . 'wincmd w'
+                elseif bufnr(filename) != -1
+                    silent execute 'buffer ' . bufnr(filename)
+                else
+                    silent execute 'edit ' . filename
+                endif
+                return 1
+            endif
+        endfor
+    endif
+
+    echohl WarningMsg | echo "No existing alternate available" | echohl None
+    return 0
+endfunction
+
+command! A call s:alternatefile_open()
+" }}}
+
+" show color scheme list {{{
+function! s:colorlist_open()
+    let l:bufname = '\[Color\ List]'
+
+    if bufwinnr(l:bufname) != -1
+        silent execute bufwinnr(l:bufname) . 'wincmd w'
     else
-        echoerr 'curl or wget not found'
-        return 0
+        silent execute '32 vnew' l:bufname
+
+        setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile cursorline
+        call setline(1, map(globpath(&rtp, 'colors/*.vim', 0, 1), 'fnamemodify(v:val, ":t:r")'))
+        setlocal nomodifiable
+
+        nnoremap <silent> <buffer> q :close<CR>
+
+        autocmd CursorMoved <buffer>
+                    \ if exists('g:colors_name') && g:colors_name != getline('.') |
+                    \   try | execute 'colorscheme ' . getline('.') | finally | endtry |
+                    \ endif
+    endif
+
+    if exists('g:colors_name')
+        call search('^\<' . g:colors_name . '\>$')
     endif
 endfunction
 
-if empty(globpath(&rtp, 'autoload/plug.vim')) && s:download('$XDG_DATA_HOME/nvim/site/autoload/plug.vim', s:plug_url)
-    autocmd VimEnter * PlugInstall
-endif
+command! Colors call s:colorlist_open()
+" }}}
+
+" ask which file to open {{{
+function! s:didyoumean_ask()
+    let filename = expand("%")
+    if filereadable(filename) | return | endif
+
+    let filenames = glob(filename . '*', 1, 1)
+    if empty(filenames) | return | endif
+
+    let nr = inputlist(['Did you mean:'] + map(range(len(filenames)), 'v:val + 1 . ". " . filenames[v:val]'))
+    if nr >= 1 && nr <= len(filenames)
+        silent execute 'bwipeout'
+        silent execute 'edit ' . filenames[nr - 1]
+        filetype detect
+    endif
+endfunction
+
+autocmd startup BufNewFile * call s:didyoumean_ask()
+" }}}
+
+" add compiler include path {{{
+function! s:includepath_add(cc)
+    let l:output = system(a:cc . " -x c++ -v -E - < /dev/null 2>&1 | sed -e '1,/#include <...> search starts here:/d;/End of search list./,$d;' -e 's/^\ *//;s/\ *(framework directory)$//'")
+    for line in split(l:output)
+        silent execute 'set path+=' . line
+    endfor
+endfunction
+
+command! -nargs=+ -complete=shellcmd IncludePath call s:includepath_add('<args>')
+" }}}
+
+" status line {{{
+function! _statusline_whitespace_warning()
+    if &readonly || !&modifiable || &buftype != ''
+        return ''
+    endif
+    if !exists('b:statusline_warning')
+        let l:mixed = search('\v(^\t+ +)|(^ +\t+)', 'nw')
+        let l:trailing = search('\v\s$', 'nw')
+        let b:statusline_warning = ''
+        if l:mixed | let b:statusline_warning .= ' mixed-indent:' . l:mixed . ' ' | endif
+        if l:trailing | let b:statusline_warning .= ' trailing-space:' .  l:trailing . ' ' | endif
+    endif
+    return b:statusline_warning
+endfunction
+
+autocmd startup BufWritePost,CursorHold * unlet! b:statusline_warning
+
+command! StatusDebugSyn set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
+"}}}
+
+" tab line {{{
+let g:buflineoffset = 0
+
+function! s:buflabel(num)
+    if empty(bufname(a:num))
+        if getbufvar(a:num, '&buftype') == 'quickfix'
+            let name = 'Quickfix List'
+        else
+            let name = 'No Name'
+        endif
+    else
+        let name = pathshorten(fnamemodify(bufname(a:num), ':~:.'))
+    endif
+    return a:num . ':' . (len(name) ? name : bufname(a:num)) . (getbufvar(a:num, '&mod') ? '+' : '')
+endfunction
+
+function! _bufline_tabline()
+    let width = &columns
+    let active = bufnr('%')
+
+    let center = ''
+    if buflisted(active)
+        let center = '[' . s:buflabel(active) . ']'
+    endif
+
+    let left = ''
+    for i in filter(range(1, active - 1), 'buflisted(v:val)')
+        let left .= ' ' . s:buflabel(i) . ' '
+    endfor
+
+    let right = ''
+    for i in filter(range(active + 1, bufnr('$')), 'buflisted(v:val)')
+        let right .= ' ' . s:buflabel(i) . ' '
+    endfor
+
+    let left_end = strwidth(left)
+    if g:buflineoffset > left_end | let g:buflineoffset = left_end | endif
+    let right_start = left_end + strwidth(center)
+    if g:buflineoffset < right_start - width | let g:buflineoffset = right_start - width | endif
+
+    let left = '%#LineNr#'. strpart(left, g:buflineoffset, left_end - g:buflineoffset)
+    let center = '%#TabLineSel#' . center
+    let right = '%#LineNr#'. strpart(right, 0, g:buflineoffset + width - right_start)
+
+    return left . center . right
+endfunction
 " }}}
 
 call plug#begin()
 " colorschemes
+Plug 'rakr/vim-one'
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
 " plugins
+Plug 'majutsushi/tagbar'
+Plug 'skywind3000/asyncrun.vim'
 Plug 'justinmk/vim-dirvish'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 call plug#end()
 
-augroup filetypes
-    autocmd!
-    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
-    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-    autocmd FileType make setl noexpandtab
-    autocmd FileType markdown setl wrap linebreak
-    autocmd FileType * setl formatoptions-=o
-    autocmd BufReadPost */include/c++/* setf cpp
-augroup END
+filetype plugin indent on
+syntax enable
 
-augroup mappings
-    autocmd!
-    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
-    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
-augroup END
-
-augroup didyoumean
-    autocmd!
-    autocmd BufNewFile * call didyoumean#ask()
-augroup END
-
-augroup startup
-    autocmd!
-    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-augroup END
-
-command! A call alternatefile#open()
-command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! Colors call colorlist#open()
-command! -nargs=+ IncludePath call includepath#add('<args>')
-command! -nargs=* G silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
-command! -nargs=1 -complete=help H enew | setl buftype=help | execute 'help <args>' | setl buflisted
-
-" better grep
-if executable('ag')
-    let &grepprg='ag --vimgrep $*'
-    let &grepformat='%f:%l:%c:%m'
-else
-    let &grepprg='grep -r -n $* . /dev/null'
-    let &grepformat='%f:%l:%m'
+set autoindent
+set autoread
+set autoread
+set autowrite
+set backspace=indent,eol,start
+if has("patch-7.4.793")
+    set belloff=all
 endif
-
-" disable annoying bells and flashes
-set belloff=all
-
-" status line
-set laststatus=2
-set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
-set statusline+=%#WarningMsg#%{statusline#whitespace#warning()}%*
-"set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
-
-" tab line
-set showtabline=2
-set tabline=%!bufline#tabline()
-
-set clipboard=unnamed
-
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set smartindent
 set cinoptions=:0,l1,g0,N-s,(0
-
-set lazyredraw
+set clipboard=unnamed
+set complete-=i
 set cursorline
-set number
-set showcmd
+set display=lastline
+set encoding=utf-8
+set expandtab
+set formatoptions=tcqj
+set gdefault
+set hidden
+set history=10000
+set hlsearch
+set ignorecase
+set incsearch
+set laststatus=2
+set lazyredraw
 set listchars=tab:↹␠,trail:·,eol:␤
 set matchpairs+=<:>
-
-set nowrap
+set mouse=a
+set nocompatible
 set nostartofline
+set noswapfile
+set nowrap
+set nowritebackup
+if has("patch-7.4.806")
+    set nrformats=bin,hex
+endif
+set number
 set scrolloff=1
+set sessionoptions-=options
+set shiftwidth=4
+set showcmd
+set showtabline=2
 set sidescrolloff=8
-
-set gdefault
-set hlsearch
-set incsearch
-set ignorecase
 set smartcase
-
+set smartindent
+set smarttab
+set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
+set statusline+=%#WarningMsg#%{_statusline_whitespace_warning()}%*
+set synmaxcol=1024
+set tabline=%!_bufline_tabline()
+set tabpagemax=50
+set tabstop=4
+set tags=./tags;,tags
+set ttyfast
+set undodir=~/.vim/undo
+set undofile
+set viewdir=~/.vim/view
+if !has('nvim')
+    set viminfo=!,'100,<50,s10,h,n~/.vim/info
+endif
 set wildmenu
 set wildmode=list:longest,full
 
-set autoread
-set autowrite
-set hidden
-set noswapfile
-set nowritebackup
-
-set undofile
 if !isdirectory(expand(&undodir))
     call mkdir(expand(&undodir), 'p')
 endif
-
-set synmaxcol=1024
 
 if has("gui_running")
     set columns=160
@@ -211,7 +313,35 @@ if has("gui_running")
 endif
 
 set background=dark
-colorscheme kalisi
+silent! colorscheme kalisi
+
+runtime! macros/matchit.vim
+runtime! ftplugin/man.vim
+
+" better grep
+if executable('ag')
+    let &grepprg='ag --vimgrep $*'
+    let &grepformat='%f:%l:%c:%m'
+else
+    let &grepprg='grep -r -n $* . /dev/null'
+    let &grepformat='%f:%l:%m'
+endif
+
+command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
+command! -nargs=* Grep silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
+command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
+
+augroup startup
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+    autocmd BufReadPost */include/c++/* setl ft=cpp
+    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType * setl formatoptions-=o
+    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
+    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType make setl noexpandtab
+    autocmd FileType markdown setl wrap linebreak
+augroup END
 
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
