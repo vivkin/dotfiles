@@ -275,7 +275,6 @@ set history=10000
 set hlsearch
 set ignorecase
 set incsearch
-set langnoremap
 set laststatus=2
 set lazyredraw
 set listchars=tab:↹␠,trail:·,eol:␤
