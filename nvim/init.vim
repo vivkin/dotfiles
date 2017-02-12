@@ -21,6 +21,12 @@ if has("gui_macvim")
 endif
 " }}}
 
+" remove all vimrc auto commands {{{
+augroup startup
+    autocmd!
+augroup END
+" }}}
+
 " setup vim-plug {{{
 if empty(globpath(&rtp, 'autoload/plug.vim'))
     let s:plug_filename = expand('~/.vim/autoload/plug.vim')
@@ -39,7 +45,7 @@ if empty(globpath(&rtp, 'autoload/plug.vim'))
     endif
 
     if v:shell_error == 0 && filereadable(s:plug_filename)
-        autocmd VimEnter * PlugInstall
+        autocmd startup VimEnter * PlugInstall
     endif
 endif
 
@@ -56,21 +62,6 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 call plug#end()
 " }}}
-
-augroup startup
-    autocmd!
-    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
-    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
-    autocmd FileType make setl noexpandtab
-    autocmd FileType markdown setl wrap linebreak
-    autocmd FileType * setl formatoptions-=o
-    autocmd BufReadPost */include/c++/* setl ft=cpp
-    " always jump to the last known cursor position
-    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-    " close command window, help and quick fix by q
-    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
-    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
-augroup END
 
 " switch between header/source {{{
 function! s:alternatefile_open()
@@ -165,24 +156,8 @@ endfunction
 command! -nargs=+ -complete=shellcmd IncludePath call s:includepath_add('<args>')
 " }}}
 
-command! -bang B ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! -nargs=* G silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
-command! -nargs=1 -complete=help H enew | setl buftype=help | execute 'help <args>' | setl buflisted
-command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
-" see the difference between the current buffer and the file it was loaded from
-command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis
-
-" better grep
-if executable('ag')
-    let &grepprg='ag --vimgrep $*'
-    let &grepformat='%f:%l:%c:%m'
-else
-    let &grepprg='grep -r -n $* . /dev/null'
-    let &grepformat='%f:%l:%m'
-endif
-
 " status line {{{
-function! init#statusline_whitespace_warning()
+function! _statusline_whitespace_warning()
     if &readonly || !&modifiable || &buftype != ''
         return ''
     endif
@@ -197,6 +172,8 @@ function! init#statusline_whitespace_warning()
 endfunction
 
 autocmd startup BufWritePost,CursorHold * unlet! b:statusline_warning
+
+command! StatusDebugSyn set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
 "}}}
 
 " tab line {{{
@@ -215,7 +192,7 @@ function! s:buflabel(num)
     return a:num . ':' . (len(name) ? name : bufname(a:num)) . (getbufvar(a:num, '&mod') ? '+' : '')
 endfunction
 
-function! init#bufline_tabline()
+function! _bufline_tabline()
     let width = &columns
     let active = bufnr('%')
 
@@ -249,9 +226,6 @@ endfunction
 
 filetype plugin indent on
 syntax enable
-
-runtime! macros/matchit.vim
-runtime! ftplugin/man.vim
 
 set autoindent
 set autoread
@@ -298,11 +272,10 @@ set sidescrolloff=8
 set smartcase
 set smartindent
 set smarttab
-set statusline+=%#WarningMsg#%{init#statusline_whitespace_warning()}%*
 set statusline=\ %f%h%r%m\ %<%=%{&ft!=''?&ft:'no\ ft'}\ \|\ %{&fenc!=''?&fenc:&enc}\ \|\ %{&fileformat}\ %4p%%\ \ %4l:%-4c
-"set statusline+=%#Debug#%{join(map(synstack(line('.'),col('.')),'synIDattr(v:val,\"name\")'))}%*
+set statusline+=%#WarningMsg#%{_statusline_whitespace_warning()}%*
 set synmaxcol=1024
-set tabline=%!init#bufline_tabline()
+set tabline=%!_bufline_tabline()
 set tabpagemax=50
 set tabstop=4
 set tags=./tags;,tags
@@ -341,6 +314,37 @@ endif
 set background=dark
 colorscheme kalisi
 
+runtime! macros/matchit.vim
+runtime! ftplugin/man.vim
+
+command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
+command! -nargs=* Grep silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
+command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
+
+augroup startup
+    autocmd!
+    autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
+    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType make setl noexpandtab
+    autocmd FileType markdown setl wrap linebreak
+    autocmd FileType * setl formatoptions-=o
+    autocmd BufReadPost */include/c++/* setl ft=cpp
+    " always jump to the last known cursor position
+    autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+    " close command window, help and quick fix by q
+    autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
+augroup END
+
+" better grep
+if executable('ag')
+    let &grepprg='ag --vimgrep $*'
+    let &grepformat='%f:%l:%c:%m'
+else
+    let &grepprg='grep -r -n $* . /dev/null'
+    let &grepformat='%f:%l:%m'
+endif
+
 cnoremap <C-n> <DOWN>
 cnoremap <C-p> <UP>
 cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
@@ -354,7 +358,7 @@ nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
 nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
-nnoremap <silent> <Leader>x :bdelete<C>
+nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
 
