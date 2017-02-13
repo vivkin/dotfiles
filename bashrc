@@ -17,15 +17,19 @@ shopt -s no_empty_cmd_completion
 
 # history
 HISTCONTROL=ignoreboth:erasedups
-HISTSIZE=10000
-PROMPT_COMMAND="history -a;history -n"
+HISTFILE="$HOME/.cache/bash/history"
+HISTFILESIZE=100000
+HISTSIZE=100000
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a; history -n"
+[[ -d "${HISTFILE%/*}" ]] || mkdir -p "${HISTFILE%/*}"
+export HISTIGNORE="&:[ ]*:bg:cd:cd -:cd ..:clear:env:exit:fg:history:l:ll:ls"
 
 # titile
 update_terminal_title() {
   echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
 }
 
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title"
+#PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title"
 
 # current branch
 git_branch_init() {
@@ -87,11 +91,6 @@ else
 fi
 alias l='ls -lh'
 alias ll='ls -lA'
-
-# shorter change dir
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
 
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
