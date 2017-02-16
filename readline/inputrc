@@ -35,4 +35,4 @@ set keymap vi-insert
 "\C-P": history-search-backward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
-"\C-L": "\e]A | less"
+"\C-L": "\C-[\C-L"
