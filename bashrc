@@ -92,6 +92,9 @@ fi
 alias l='ls -lh'
 alias ll='ls -lA'
 
+# go to previous dir
+alias -- -='cd -'
+
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
   . $(brew --prefix)/share/bash-completion/bash_completion
