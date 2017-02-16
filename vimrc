@@ -216,13 +216,14 @@ endfunction
 
 call plug#begin()
 " colorschemes
-Plug 'rakr/vim-one'
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
+Plug 'rakr/vim-one'
 " plugins
-Plug 'majutsushi/tagbar'
-Plug 'skywind3000/asyncrun.vim'
 Plug 'justinmk/vim-dirvish'
+Plug 'majutsushi/tagbar'
+Plug 'pboettch/vim-cmake-syntax'
+Plug 'skywind3000/asyncrun.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 call plug#end()
@@ -328,8 +329,8 @@ else
 endif
 
 command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! -nargs=* Grep silent execute 'grep! ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|') | botright cwindow
-command! -bang -nargs=* -complete=file M AsyncRun -program=make @ <args>
+command! -nargs=* Grep execute 'AsyncRun -program=grep @ ' . escape(empty(<q-args>) ? expand("<cword>") : <q-args>, '|')
+command! -bang -nargs=* -complete=file Make AsyncRun -save=1 -program=make @ <args>
 
 augroup startup
     autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
@@ -341,6 +342,7 @@ augroup startup
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
+    autocmd FileType qf let &l:statusline = substitute(&g:statusline, "%h", "[%{g:asyncrun_status}]%{exists('w:quickfix_title')?w:quickfix_title:''}", "")
 augroup END
 
 cnoremap <C-n> <DOWN>
@@ -355,9 +357,12 @@ nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
-nnoremap <silent> <Leader>m :make<CR>:botright cwindow<CR>
+nnoremap <silent> <Leader>m :Make<CR>:call asyncrun#quickfix_toggle(&lines / 4, 1)<CR>
 nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
+
+set exrc
+set secure
 
 " vim:set fdm=marker fdl=0:
