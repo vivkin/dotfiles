@@ -11,7 +11,6 @@ set mark-directories on
 set mark-symlinked-directories on
 set match-hidden-files off
 set menu-complete-display-prefix on
-set print-completions-horizontally off
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
 set visible-stats on
@@ -21,7 +20,6 @@ set keymap vi-command
 "\C-P": history-search-backward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
-"\C-L": "A | less"
 
 set keymap vi-insert
 "\C-A": beginning-of-line
@@ -35,4 +33,7 @@ set keymap vi-insert
 "\C-P": history-search-backward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
-"\C-L": "\C-[\C-L"
+$if Bash
+    "\C-G": "\eA | grep \"\"\C-B"
+    "\C-L": "\eA | less"
+$endif
