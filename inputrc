@@ -1,6 +1,6 @@
 set bell-style none
-set colored-stats on
 set colored-completion-prefix on
+set colored-stats on
 set completion-display-width 100
 set completion-ignore-case on
 set completion-map-case on
@@ -13,13 +13,12 @@ set match-hidden-files off
 set menu-complete-display-prefix on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
+set skip-completed-text on
 set visible-stats on
 
 set keymap vi-command
 "\C-N": history-search-forward
 "\C-P": history-search-backward
-"\e[A": history-search-backward
-"\e[B": history-search-forward
 
 set keymap vi-insert
 "\C-A": beginning-of-line
@@ -27,13 +26,12 @@ set keymap vi-insert
 "\C-E": end-of-line
 "\C-F": forward-char
 "\C-I": menu-complete
-"\C-K": kill-whole-line
+"\C-K": kill-line
 "\C-L": clear-screen
 "\C-N": history-search-forward
 "\C-P": history-search-backward
-"\e[A": history-search-backward
-"\e[B": history-search-forward
+"\e.": yank-last-arg
 $if Bash
-    "\C-G": "\eA | grep \"\"\C-B"
-    "\C-L": "\eA | less"
+    "\eg": "\eA | grep \"\"\C-B"
+    "\el": "\eA | less"
 $endif
