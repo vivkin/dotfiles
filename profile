@@ -5,7 +5,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # environment
 export EDITOR=vim
-export INPUTRC="$HOME/.config/readline/inputrc"
+export INPUTRC="$HOME/.config/inputrc"
 export LESSHISTFILE="$HOME/.cache/less/history"
 export PYTHONDONTWRITEBYTECODE=1
 export VIMINIT='let $MYVIMRC="$HOME/.config/vimrc" | source $MYVIMRC'
