@@ -48,8 +48,8 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }git_branch_init"
 
 # staged, dirty and upstream tracking
 git_status_update() {
-  if [ -n "$GIT_BRANCH" ]; then
-    GIT_STATUS=
+  GIT_STATUS=
+  if [ -n "$GIT_BRANCH" ] && ! git config --get bash.prompt.disable &> /dev/null; then
     git diff --cached --quiet || GIT_STATUS+="+"
     git diff --quiet || GIT_STATUS+="*"
     read GIT_BRANCH_AHEAD GIT_BRANCH_BEHIND <<< $(git rev-list --left-right --count HEAD...@{u} 2> /dev/null)
@@ -58,9 +58,7 @@ git_status_update() {
   fi
 }
 
-if which git &> /dev/null && ! git config --get bash.prompt.disable &> /dev/null; then
-  PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }git_status_update"
-fi
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }$(which git &> /dev/null && echo git_status_update)"
 
 # prompt
 RED="\[\e[31m\]"
@@ -94,6 +92,16 @@ alias ll='ls -lA'
 
 # go to previous dir
 alias -- -='cd -'
+
+# make dir and cd to it
+md() {
+	mkdir -p "$1" && cd "$1"
+}
+
+# find by name
+ff() {
+  find "$PWD" -name "$1"
+}
 
 # enable programmable completion features
 if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then

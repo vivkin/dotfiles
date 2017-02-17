@@ -218,6 +218,7 @@ call plug#begin()
 " colorschemes
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
+Plug 'owickstrom/vim-colors-paramount'
 Plug 'rakr/vim-one'
 " plugins
 Plug 'justinmk/vim-dirvish'
