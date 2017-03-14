@@ -33,13 +33,13 @@ update_terminal_title() {
 
 # current branch
 git_branch_init() {
-  GIT_UP_DIR=$PWD
-  while ! [ -d "$GIT_UP_DIR/.git" ] && [ -n "$GIT_UP_DIR" ]; do
-    GIT_UP_DIR=${GIT_UP_DIR%/*}
+  GIT_WORK_TREE=$PWD
+  while ! [ -d "$GIT_WORK_TREE/.git" ] && [ -n "$GIT_WORK_TREE" ]; do
+    GIT_WORK_TREE=${GIT_WORK_TREE%/*}
   done
   GIT_BRANCH=
-  if [ -e "$GIT_UP_DIR/.git/HEAD" ]; then
-    GIT_BRANCH=$(< "$GIT_UP_DIR/.git/HEAD")
+  if [ -e "$GIT_WORK_TREE/.git/HEAD" ]; then
+    GIT_BRANCH=$(< "$GIT_WORK_TREE/.git/HEAD")
     GIT_BRANCH=${GIT_BRANCH##*/}
   fi
 }
