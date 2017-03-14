@@ -330,7 +330,7 @@ else
 endif
 
 command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! -nargs=* Grep execute 'AsyncRun -program=grep @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
+command! -complete=file -nargs=* Grep execute 'AsyncRun -program=grep @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
 command! -bang -complete=file -nargs=* Make AsyncRun -save=1 -program=make @ <args>
 
 augroup startup
