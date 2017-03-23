@@ -26,12 +26,6 @@ set keymap vi-insert
 "\C-E": end-of-line
 "\C-F": forward-char
 "\C-I": menu-complete
-"\C-K": kill-line
 "\C-L": clear-screen
 "\C-N": history-search-forward
 "\C-P": history-search-backward
-"\e.": yank-last-arg
-$if Bash
-    "\eg": "\eA | grep \"\"\C-B"
-    "\el": "\eA | less"
-$endif
