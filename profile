@@ -15,3 +15,6 @@ export VIMINIT='let $MYVIMRC="$HOME/.config/vimrc" | source $MYVIMRC'
 
 # source bashrc
 [[ -n "$BASH_VERSION" ]] && . "$HOME/.config/bashrc"
+
+# source local bash_profile
+[[ -f "$HOME/.local/etc/bash_profile" ]] && . "$HOME/.local/etc/bash_profile"
