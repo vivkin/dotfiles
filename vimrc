@@ -12,13 +12,9 @@ let g:loaded_spellfile_plugin = 1
 let g:loaded_tarPlugin = 1
 let g:loaded_vimballPlugin = 1
 let g:loaded_zipPlugin = 1
-" }}}
-
-" skip macvim bindings and colorscheme {{{
-if has("gui_macvim")
-    let macvim_skip_cmd_opt_movement = 1
-    let macvim_skip_colorscheme = 1
-endif
+let macvim_skip_cmd_opt_movement = 1
+let macvim_skip_colorscheme = 1
+let skip_defaults_vim = 1
 " }}}
 
 " remove all vimrc auto commands {{{
@@ -250,7 +246,6 @@ set expandtab
 set formatoptions=tcqj
 set gdefault
 set hidden
-set history=10000
 set hlsearch
 set ignorecase
 set incsearch
@@ -289,7 +284,8 @@ set undodir=~/.vim/undo
 set undofile
 set viewdir=~/.vim/view
 if !has('nvim')
-    set viminfo=!,'100,<50,s10,h,n~/.vim/info
+    set viminfo+=n~/.vim/info
+    set history=10000
 endif
 set wildmenu
 set wildmode=list:longest,full
@@ -319,6 +315,7 @@ silent! colorscheme kalisi
 
 runtime! macros/matchit.vim
 runtime! ftplugin/man.vim
+cabbrev man Man
 
 " better grep
 if executable('ag')
