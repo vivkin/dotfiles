@@ -64,10 +64,12 @@ function! s:alternatefile_open()
         for extension in extensions
             let filename = findfile(basename . extension)
             if filename != ''
-                if bufwinnr(filename) != -1
-                    silent execute bufwinnr(filename) . 'wincmd w'
-                elseif bufnr(filename) != -1
-                    silent execute 'buffer ' . bufnr(filename)
+                if buflisted(filename)
+                    if bufwinnr(filename) != -1
+                        silent execute bufwinnr(filename) . 'wincmd w'
+                    else
+                        silent execute 'buffer ' . bufnr(filename)
+                    endif
                 else
                     silent execute 'edit ' . filename
                 endif
