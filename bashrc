@@ -60,25 +60,27 @@ git_status_update() {
 
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }$(which git &> /dev/null && echo git_status_update)"
 
-# prompt
-RED="\[\e[31m\]"
-YELLOW="\[\e[33m\]"
-BLUE="\[\e[34m\]"
-CYAN="\[\e[36m\]"
-WHITE="\[\e[37m\]"
-GRAY="\[\e[90m\]"
-RESET="\[\e[0m\]"
+# prompting
+bash_prompt_init() {
+  local RESET="\[\e[0m\]"
+  local RED="\[\e[31m\]"
+  local GREEN="\[\e[32m\]"
+  local YELLOW="\[\e[33m\]"
+  local BLUE="\[\e[34m\]"
+  local MAGNETA="\[\e[35m\]"
+  local CYAN="\[\e[36m\]"
+  local WHITE="\[\e[37m\]"
+  local GRAY="\[\e[90m\]"
 
-# show username@host if logged in through SSH
-[[ -n "$SSH_TTY" ]] && PROMPT_HOST="${YELLOW}\u${GRAY}@\h"
-# show username@host if root, with username in white
-[[ $EUID == 0 ]] && PROMPT_HOST="${WHITE}\u${GRAY}@\h"
-# show default prompt character on windows
-[[ -n "$MSYSTEM" ]] && PROMPT_CHARACTER="\$"
-# show current working directory, with $HOME abbreviated with a tilde
-PS1="${PROMPT_HOST:+$PROMPT_HOST }${BLUE}\w\${GIT_BRANCH:+ ${GRAY}\$GIT_BRANCH\$GIT_STATUS} "
-# show prompt symbol in red if previous command fails
-PS1+="${CYAN}\$(if [ \$? != 0 ]; then echo -ne "${RED}"; fi)${PROMPT_CHARACTER:-❯}${RESET} "
+  # show username@host if logged in through SSH
+  PS1="${SSH_TTY:+$YELLOW\u$GRAY@\h }"
+  # show current working directory, current branch and status
+  PS1+="$BLUE\w\${GIT_BRANCH:+ $GREEN\$GIT_BRANCH\$GIT_STATUS}\n"
+  # show prompt symbol in red if previous command fails
+  PS1+="$CYAN\$([ \$? != 0 ] && echo -ne $MAGNETA)${PROMPT_CHARACTER:-❯}$RESET "
+}
+
+bash_prompt_init
 
 # colored grep and ls
 alias grep='grep --color=auto'
