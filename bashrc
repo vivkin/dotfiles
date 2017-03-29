@@ -73,9 +73,9 @@ bash_prompt_init() {
   local GRAY="\[\e[90m\]"
 
   # show username@host if logged in through SSH
-  PS1="${SSH_TTY:+$GREEN\u@$BLUE\h:}"
+  PS1="${SSH_TTY:+$GREEN\u@\h$RESET:}"
   # show current working directory, current branch and status
-  PS1+="$RESET\w\${GIT_BRANCH:+ $GRAY(\$GIT_BRANCH\$GIT_STATUS)}\n"
+  PS1+="$BLUE\w\${GIT_BRANCH:+ $YELLOW(\$GIT_BRANCH\$GIT_STATUS)}\n"
   # show prompt symbol in red if previous command fails
   PS1+="$RESET\$([ \$? != 0 ] && echo -ne $MAGNETA)${PROMPT_CHARACTER:-❯}$RESET "
 }
