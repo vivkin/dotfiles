@@ -1,0 +1,10 @@
+{
+  "ignore_keyboard_layout": true,
+  "blacklist": "*mail.google.com*",
+  "prev_patterns": "prev  previous  back  older  <  «  <<",
+  "next_patterns": "next  more  newer  >  »  >>",
+  "mode.normal.history_back": "<C-o>",
+  "mode.normal.history_forward": "<C-i>",
+  "mode.normal.tab_select_previous": "<C-p>    gT",
+  "mode.normal.tab_select_next": "<C-n>    gt"
+}
