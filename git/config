@@ -22,3 +22,4 @@
     st = status --short --branch --untracked-files=no
     di = diff --patch-with-stat
     lo = log --graph --pretty=format:'%C(red)%h%C(reset)%C(yellow)%d %C(green)(%cr) %C(reset)%s %C(bold blue)<%an>%C(reset)'
+	br = branch --verbose --verbose --all
