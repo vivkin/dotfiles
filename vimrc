@@ -351,7 +351,9 @@ cnoremap <CR> <C-\>esubstitute(getcmdline(), '<C-v><C-m>', '\\n', 'g')<CR><CR>
 
 inoremap <C-u> <C-g>u<C-u>
 
-nnoremap <Space> :nohlsearch<CR>
+nnoremap <BS> :nohlsearch<CR><BS>
+nnoremap <CR> :nohlsearch<CR><CR>
+nnoremap <Space> :nohlsearch<CR><Space>
 nnoremap <silent> <C-n> :bnext<CR>
 nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
