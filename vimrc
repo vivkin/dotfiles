@@ -359,7 +359,7 @@ nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :copen<CR>
-nnoremap <silent> <Leader>m :Make<CR>:call asyncrun#quickfix_toggle(&lines / 4, 1)<CR>
+nnoremap <silent> <Leader>m :wall<CR>:Make<CR>:call asyncrun#quickfix_toggle(&lines / 4, 1)<CR>
 nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
