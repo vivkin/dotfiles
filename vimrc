@@ -214,10 +214,12 @@ endfunction
 
 call plug#begin()
 " colorschemes
+Plug 'KeitaNakamura/neodark.vim'
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
 Plug 'owickstrom/vim-colors-paramount'
 Plug 'rakr/vim-one'
+Plug 'romainl/flattened'
 " plugins
 Plug 'justinmk/vim-dirvish'
 Plug 'majutsushi/tagbar'
@@ -343,6 +345,7 @@ augroup startup
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType qf let &l:statusline = substitute(&g:statusline, "%h", "[%{g:asyncrun_status}]%{exists('w:quickfix_title')?w:quickfix_title:''}", "")
+    autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(&lines / 3, 1)
 augroup END
 
 cnoremap <C-n> <DOWN>
@@ -358,8 +361,8 @@ nnoremap <silent> <C-n> :bnext<CR>
 nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
-nnoremap <silent> <Leader>c :copen<CR>
-nnoremap <silent> <Leader>m :wall<CR>:Make<CR>:call asyncrun#quickfix_toggle(&lines / 4, 1)<CR>
+nnoremap <silent> <Leader>c :call asyncrun#quickfix_toggle(&lines / 3, 1)<CR>
+nnoremap <silent> <Leader>m :Make<CR>
 nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
