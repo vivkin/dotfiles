@@ -331,8 +331,8 @@ else
 endif
 
 command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! -complete=file -nargs=* Grep execute 'AsyncRun -program=grep @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
-command! -bang -complete=file -nargs=* Make AsyncRun -save=1 -program=make @ <args>
+command! -complete=file -nargs=* Grep execute 'AsyncRun -program=grep -post=cwindow @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
+command! -bang -complete=file -nargs=* Make AsyncRun -save=1 -program=make -post=cwindow @ <args>
 
 augroup startup
     autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
@@ -345,7 +345,7 @@ augroup startup
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType qf let &l:statusline = substitute(&g:statusline, "%h", "[%{g:asyncrun_status}]%{exists('w:quickfix_title')?w:quickfix_title:''}", "")
-    autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(&lines / 3, 1)
+    autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(&lines / 4, 1)
 augroup END
 
 cnoremap <C-n> <DOWN>
@@ -361,8 +361,8 @@ nnoremap <silent> <C-n> :bnext<CR>
 nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
-nnoremap <silent> <Leader>c :call asyncrun#quickfix_toggle(&lines / 3, 1)<CR>
-nnoremap <silent> <Leader>m :Make<CR>
+nnoremap <silent> <Leader>c :call asyncrun#quickfix_toggle(&lines / 4)<CR>
+nnoremap <silent> <Leader>m :wall<CR>:Make<CR>
 nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
