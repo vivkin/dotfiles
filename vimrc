@@ -330,6 +330,8 @@ else
     let &grepformat='%f:%l:%m'
 endif
 
+command! CC AsyncRun -save=1 -post=cwindow @ cc -std=c11 -Wall -Wextra -O3 "%" -o "%<"
+command! CXX AsyncRun -save=1 -post=cwindow @ c++ -std=c++14 -Wall -Wextra -O3 "%" -o "%<"
 command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 command! -complete=file -nargs=* Grep execute 'AsyncRun -program=grep -post=cwindow @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
 command! -bang -complete=file -nargs=* Make AsyncRun -save=1 -program=make -post=cwindow @ <args>
