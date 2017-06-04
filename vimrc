@@ -321,6 +321,8 @@ runtime! macros/matchit.vim
 runtime! ftplugin/man.vim
 cabbrev man Man
 
+let g:dirvish_relative_paths = 1
+
 " better grep
 if executable('ag')
     let &grepprg='ag --vimgrep $*'
