@@ -340,7 +340,7 @@ command! -bang -complete=file -nargs=* Make AsyncRun -save=1 -program=make -post
 
 augroup startup
     autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-    autocmd BufReadPost */include/c++/* setl ft=cpp
+    autocmd BufReadPost */include/c++/*,*.cpp.i setl ft=cpp
     autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
     autocmd FileType * setl formatoptions-=o
     autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
