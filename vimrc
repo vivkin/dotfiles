@@ -336,7 +336,7 @@ command! CC AsyncRun -save=1 -post=cwindow @ cc -std=c11 -Wall -Wextra -O3 "%" -
 command! CXX AsyncRun -save=1 -post=cwindow @ c++ -std=c++14 -Wall -Wextra -O3 "%" -o "%<"
 command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
 command! -complete=file -nargs=* Grep execute 'AsyncRun -program=grep -post=cwindow @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
-command! -bang -complete=file -nargs=* Make AsyncRun -save=1 -program=make -post=cwindow @ <args>
+command! -bang -complete=file -nargs=* Make AsyncRun -save=2 -program=make -post=cwindow @ <args>
 
 augroup startup
     autocmd BufReadPost * if line("'\"") >= 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
@@ -366,7 +366,7 @@ nnoremap <silent> <C-p> :bprevious<CR>
 nnoremap <silent> <Leader>B :B!<CR>
 nnoremap <silent> <Leader>b :B<CR>
 nnoremap <silent> <Leader>c :call asyncrun#quickfix_toggle(&lines / 4)<CR>
-nnoremap <silent> <Leader>m :wall<CR>:Make<CR>
+nnoremap <silent> <Leader>m :Make<CR>
 nnoremap <silent> <Leader>x :bdelete<CR>
 nnoremap K i<CR><ESC>
 nnoremap Q ZQ
