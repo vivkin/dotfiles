@@ -214,11 +214,9 @@ endfunction
 
 call plug#begin()
 " colorschemes
-Plug 'KeitaNakamura/neodark.vim'
 Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
 Plug 'nightsense/seabird'
-Plug 'owickstrom/vim-colors-paramount'
 Plug 'rakr/vim-one'
 Plug 'romainl/flattened'
 " plugins
