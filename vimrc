@@ -347,7 +347,7 @@ augroup startup
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
-    autocmd FileType qf let &l:statusline = substitute(&g:statusline, "%h", "[%{g:asyncrun_status}]%{exists('w:quickfix_title')?w:quickfix_title:''}", "")
+    autocmd FileType qf setl wrap | let &l:statusline = substitute(&g:statusline, "%h", "[%{g:asyncrun_status}]%{exists('w:quickfix_title')?w:quickfix_title:''}", "")
     autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(&lines / 4, 1)
 augroup END
 
