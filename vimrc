@@ -220,6 +220,7 @@ Plug 'nightsense/seabird'
 Plug 'rakr/vim-one'
 Plug 'romainl/flattened'
 " plugins
+Plug 'johngrib/vim-game-code-break'
 Plug 'justinmk/vim-dirvish'
 Plug 'majutsushi/tagbar'
 Plug 'pboettch/vim-cmake-syntax'
@@ -343,8 +344,9 @@ augroup startup
     autocmd CmdwinEnter * nnoremap <buffer> <silent> q :close<CR>
     autocmd FileType * setl formatoptions-=o
     autocmd FileType c,cpp,objc,objcpp setl formatprg=clang-format
-    autocmd FileType cmake setl nowrap tabstop=2 shiftwidth=2
+    autocmd FileType cmake,yaml setl nowrap tabstop=2 shiftwidth=2
     autocmd FileType help,qf nnoremap <buffer> <silent> q :close<CR>
+    autocmd FileType help,man execute 'only | setl buflisted'
     autocmd FileType make setl noexpandtab
     autocmd FileType markdown setl wrap linebreak
     autocmd FileType qf setl wrap | let &l:statusline = substitute(&g:statusline, "%h", "[%{g:asyncrun_status}]%{exists('w:quickfix_title')?w:quickfix_title:''}", "")
