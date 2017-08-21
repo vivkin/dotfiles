@@ -26,10 +26,10 @@ export HISTIGNORE="&:[ ]*:bg:cd:cd -:cd ..:clear:env:exit:fg:history:l:ll:ls"
 
 # titile
 update_terminal_title() {
-  echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${PWD/#$HOME/\~}\a"
+  echo -ne "\e]0;${MSYSTEM:+$MSYSTEM }${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\a"
 }
 
-#PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }update_terminal_title"
 
 # current branch
 git_branch_init() {
