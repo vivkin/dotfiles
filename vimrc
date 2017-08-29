@@ -220,10 +220,9 @@ Plug 'nightsense/seabird'
 Plug 'rakr/vim-one'
 Plug 'romainl/flattened'
 " plugins
-Plug 'johngrib/vim-game-code-break'
+Plug 'fatih/vim-go'
 Plug 'justinmk/vim-dirvish'
 Plug 'majutsushi/tagbar'
-Plug 'mhinz/vim-startify'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'tpope/vim-surround'
@@ -336,7 +335,7 @@ endif
 command! CC AsyncRun -save=1 -post=cwindow @ cc -std=c11 -Wall -Wextra -O3 "%" -o "%<"
 command! CXX AsyncRun -save=1 -post=cwindow @ c++ -std=c++14 -Wall -Wextra -O3 "%" -o "%<"
 command! -bang Buffer ls<bang> | let nr = input('Which one: ') | if nr != '' | execute nr != 0 ? 'buffer ' . nr : 'enew' | endif
-command! -complete=file -nargs=* Grep execute 'AsyncRun -program=grep -post=cwindow @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
+command! -complete=file -nargs=* G execute 'AsyncRun -program=grep -post=cwindow @ ' . (empty(<q-args>) ? expand("<cword>") : <q-args>)
 command! -bang -complete=file -nargs=* Make AsyncRun -save=2 -program=make -post=cwindow @ <args>
 
 augroup startup
