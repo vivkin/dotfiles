@@ -105,11 +105,24 @@ ff() {
   find "$PWD" -name "$1"
 }
 
-# enable programmable completion features
-if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
-  . $(brew --prefix)/share/bash-completion/bash_completion
-elif [ -f /usr/share/bash-completion/bash_completion ]; then
-  . /usr/share/bash-completion/bash_completion
-elif [ -f /etc/bash_completion ]; then
-  . /etc/bash_completion
+# homebrew
+if [[ -d "/opt/homebrew" ]]; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+
+    [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+
+    if [[ -d "/opt/homebrew/etc/bash_completion.d" ]]; then
+        for f in "/opt/homebrew/etc/bash_completion.d/*"; do
+            . $f
+        done
+    fi
 fi
+
+## enable programmable completion features
+#if which brew &> /dev/null && [ -f $(brew --prefix)/share/bash-completion/bash_completion ]; then
+#  . $(brew --prefix)/share/bash-completion/bash_completion
+#elif [ -f /usr/share/bash-completion/bash_completion ]; then
+#  . /usr/share/bash-completion/bash_completion
+#elif [ -f /etc/bash_completion ]; then
+#  . /etc/bash_completion
+#fi
