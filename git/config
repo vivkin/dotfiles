@@ -25,3 +25,5 @@
 	br = branch --verbose --verbose --all
 [pull]
 	ff = only
+[init]
+	defaultBranch = master
